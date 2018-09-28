@@ -2,8 +2,9 @@ package com.langtoun.oastypes.impl;
 
 import static com.langtoun.oastypes.util.StringExtensions.doubleQuote;
 import static org.apache.commons.text.StringEscapeUtils.escapeJson;
+import static com.langtoun.oastypes.util.CollectorUtil.toLinkedMap;
 
-import java.util.LinkedHashMap;
+import java.util.AbstractMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -116,16 +117,15 @@ public class OASObjectTypeImpl extends OASTypeImpl implements OASObjectType {
 
     public Builder properties() {
       final Map<String, Schema> properties = schema.getProperties();
-      oasObjectType.properties = new LinkedHashMap<>();
-
-      for (Entry<String, Schema> property : properties.entrySet()) {
-        final String key = property.getKey();
-        final Schema value = property.getValue();
-        oasObjectType.properties.put(
-          key,
-          OASTypeFactory.createOASType(value, Overlay.of(properties).getReference(key))
-        );
-      }
+      oasObjectType.properties =
+        properties.entrySet().stream()
+          .map(e ->
+            new AbstractMap.SimpleEntry<>(
+              e.getKey(),
+              OASTypeFactory.createOASType(e.getValue(), Overlay.of(properties).getReference(e.getKey()))
+            )
+          )
+          .collect(toLinkedMap(Entry::getKey, Entry::getValue));
       return this;
     }
 
