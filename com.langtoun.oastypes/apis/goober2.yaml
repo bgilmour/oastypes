@@ -1,0 +1,78 @@
+openapi: "3.0.0"
+info:
+  version: 1.0.0
+  title: Schema Object Tests
+  description: A sample API to test the contents of the Schema object for various type definitions
+servers:
+  - url: http://langtoun.com/types
+paths:
+  /res:
+    get:
+      operationId: getRes
+      parameters:
+        - name: p1
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+        - name: p2
+          in: query
+          required: false
+          schema:
+            $ref: '#/components/schemas/T1'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/T2'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/T3'
+components:
+  schemas:
+    T1:
+      allOf:
+        - $ref: '#/components/schemas/T2'
+        - required:
+          - id
+          properties:
+            id:
+              type: integer
+              format: int64
+
+    T2:
+      required:
+        - name
+      properties:
+        name:
+          type: string
+        tag:
+          type: string
+
+    T3:
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+        other:
+          $ref: '#/components/schemas/T4'
+
+    T4:
+      type: integer
+      format: int32
+
+    T5:
+      $ref: '#/components/schemas/T4'

@@ -1,0 +1,131 @@
+openapi: "3.0.0"
+info:
+  version: 1.0.0
+  title: Schema Object - Objects With Simple Array Properties Tests
+servers:
+  - url: http://langtoun.com/types
+paths:
+  /res:
+    get:
+      operationId: getRes
+      parameters:
+        - name: p1
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+        - name: p2
+          in: query
+          required: false
+          schema:
+            $ref: '#/components/schemas/T1'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/T1'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/T1'
+components:
+  schemas:
+
+    O1-OPT:
+      type: object
+      properties:
+        s1:
+          type: array
+          items:
+            type: string
+        b1:
+          type: array
+          items:
+            type: boolean
+        n1:
+          type: array
+          items:
+            type: number
+            format: float
+        n2:
+          type: array
+          items:
+            type: number
+            format: double
+        i1:
+          type: array
+          items:
+            type: number
+            format: int32
+        i2:
+          type: array
+          items:
+            type: number
+            format: int64
+        d1:
+          type: array
+          items:
+            type: string
+            format: date
+        dt1:
+          type: array
+          items:
+            type: string
+            format: date-time
+
+    O1-REQ:
+      type: object
+      required:
+        - s1
+        - n1
+        - i1
+      properties:
+        s1:
+          type: array
+          items:
+            type: string
+        b1:
+          type: array
+          items:
+            type: boolean
+        n1:
+          type: array
+          items:
+            type: number
+            format: float
+        n2:
+          type: array
+          items:
+            type: number
+            format: double
+        i1:
+          type: array
+          items:
+            type: number
+            format: int32
+        i2:
+          type: array
+          items:
+            type: number
+            format: int64
+        d1:
+          type: array
+          items:
+            type: string
+            format: date
+        dt1:
+          type: array
+          items:
+            type: string
+            format: date-time
+
+
+
+

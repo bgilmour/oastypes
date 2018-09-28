@@ -1,0 +1,153 @@
+openapi: "3.0.0"
+info:
+  version: 1.0.0
+  title: Schema Object - Array Of Simple Type Tests
+servers:
+  - url: http://langtoun.com/types
+paths:
+  /res:
+    get:
+      operationId: getRes
+      parameters:
+        - name: p1
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+        - name: p2
+          in: query
+          required: false
+          schema:
+            $ref: '#/components/schemas/T1'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/T1'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/T1'
+components:
+  schemas:
+
+    A1-S:
+      type: array
+      items:
+        type: string
+      minItems: 1
+      maxItems: 8
+
+    A2-S:
+      type: array
+      items:
+        type: string
+        minLength: 4
+        maxLength: 16
+      minItems: 1
+      maxItems: 8
+
+    A1-B:
+      type: array
+      items:
+        type: boolean
+      minItems: 1
+      maxItems: 8
+
+    A1-N1:
+      type: array
+      items:
+        type: number
+        format: float
+      minItems: 1
+      maxItems: 8
+
+    A1-N2:
+      type: array
+      items:
+        type: number
+        format: double
+      minItems: 1
+      maxItems: 8
+
+    A2-N1:
+      type: array
+      items:
+        type: number
+        format: float
+        minimum: -50.0
+        maximum: 50.0
+      minItems: 1
+      maxItems: 8
+
+    A2-N2:
+      type: array
+      items:
+        type: number
+        format: double
+        minimum: -1000.0
+        maximum: 1000.0
+      minItems: 1
+      maxItems: 8
+
+    A1-I1:
+      type: array
+      items:
+        type: number
+        format: int32
+      minItems: 1
+      maxItems: 8
+
+    A1-I2:
+      type: array
+      items:
+        type: number
+        format: int64
+      minItems: 1
+      maxItems: 8
+
+    A2-I1:
+      type: array
+      items:
+        type: number
+        format: int32
+        minimum: -200
+        maximum: 200
+      minItems: 1
+      maxItems: 8
+
+    A2-I2:
+      type: array
+      items:
+        type: number
+        format: int64
+        minimum: -2500
+        maximum: 2500
+      minItems: 1
+      maxItems: 8
+
+    A1-D:
+      type: array
+      items:
+        type: string
+        format: date
+      minItems: 1
+      maxItems: 8
+
+    A1-DT:
+      type: array
+      items:
+        type: string
+        format: date-time
+      minItems: 1
+      maxItems: 8
+
+
+
