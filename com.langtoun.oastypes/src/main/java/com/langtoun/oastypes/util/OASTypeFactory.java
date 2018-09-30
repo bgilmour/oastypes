@@ -28,7 +28,7 @@ public class OASTypeFactory {
      */
     System.out.printf("    --> OASTypeFactory: %s:%s from %s\n", schema.getName(), schema.getType(), schema);
     if (reference != null) {
-      System.out.printf("        [$ref: %s (%s)]\n", reference.getRefString(), reference.getNormalizedRef());
+      System.out.printf("        [$ref: %s]\n", reference.getRefString());
     } else {
       System.out.println("        [$ref: null]");
     }

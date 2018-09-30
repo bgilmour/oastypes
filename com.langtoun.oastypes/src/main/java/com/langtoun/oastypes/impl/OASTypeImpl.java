@@ -141,7 +141,7 @@ public class OASTypeImpl implements OASType {
       .append(doubleQuote(escapeJson(getClass().getSimpleName())));
     if (reference != null) {
       sb.append(",").append(doubleQuote("$ref")).append(":")
-        .append(doubleQuote(escapeJson(reference.getRefString())));
+        .append(doubleQuote(reference.getRefString()));
     }
 
     sb.append(",").append(doubleQuote("name")).append(":")
