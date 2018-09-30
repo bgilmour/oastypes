@@ -12,15 +12,20 @@ import java.util.stream.Collectors;
 public final class CollectorUtil {
 
   /**
-   * Create a two parameter collector that uses a {@link LinkedHashMap}.
+   * Create a two parameter collector method that creates a new collector
+   * backed by a {@link LinkedHashMap}.
    *
+   * @param <T>  The type of input elements to the reduction operation.
+   * @param <A>  The mutable accumulation type of the reduction operation
+   *             (often hidden as an implementation detail).
+   * @param <R>  The result type of the reduction operation.
    * @param keyMapper  The function that provides the key value.
    * @param valueMapper  The function that provides the mapped value.
-   * @return
+   * @return A new collector that uses a {@link LinkedHashMap}.
    */
-  public static <T, K, U> Collector<T, ?, Map<K, U>> toLinkedMap(
-    Function<? super T, ? extends K> keyMapper,
-    Function<? super T, ? extends U> valueMapper
+  public static <T, A, R> Collector<T, ?, Map<A, R>> toLinkedMap(
+    Function<? super T, ? extends A> keyMapper,
+    Function<? super T, ? extends R> valueMapper
   ) {
     return Collectors.toMap(
       keyMapper,

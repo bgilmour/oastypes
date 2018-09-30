@@ -6,6 +6,7 @@ import static org.apache.commons.text.StringEscapeUtils.escapeJson;
 import com.langtoun.oastypes.OASArrayType;
 import com.langtoun.oastypes.OASType;
 import com.langtoun.oastypes.util.OASTypeFactory;
+import com.langtoun.oastypes.util.OverlayUtil;
 import com.reprezen.jsonoverlay.Overlay;
 import com.reprezen.jsonoverlay.Reference;
 import com.reprezen.kaizen.oasparser.model3.Schema;
@@ -100,7 +101,11 @@ public class OASArrayTypeImpl extends OASTypeImpl implements OASArrayType {
 
     public Builder items() {
       final Schema itemsSchema = schema.getItemsSchema();
-      oasArrayType.items = OASTypeFactory.createOASType(itemsSchema, Overlay.of(schema).getReference("items"));
+
+      Overlay<Schema> itemsOverlay = Overlay.of(schema, "itemsSchema", Schema.class);
+      Reference reference = OverlayUtil.getReference(itemsOverlay);
+
+      oasArrayType.items = OASTypeFactory.createOASType(itemsSchema, reference);
       return this;
     }
 

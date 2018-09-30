@@ -13,9 +13,9 @@ import com.langtoun.oastypes.OASObjectType;
 import com.langtoun.oastypes.OASStringType;
 import com.langtoun.oastypes.OASType;
 
-public class OASTypeToSchemaVisitor implements OASTypeDispatcher<XmlSchemaType, Boolean>, OASTypeVisitor<XmlSchemaType, Boolean> {
+public class OASTypeToXmlSchemaVisitor implements OASTypeDispatcher<XmlSchemaType, Boolean>, OASTypeVisitor<XmlSchemaType, Boolean> {
 
-  public OASTypeToSchemaVisitor() {
+  public OASTypeToXmlSchemaVisitor() {
     // TODO Auto-generated constructor stub
   }
 

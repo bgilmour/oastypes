@@ -10,6 +10,14 @@ import com.langtoun.oastypes.OASNumberType;
 import com.langtoun.oastypes.OASObjectType;
 import com.langtoun.oastypes.OASStringType;
 
+/**
+ * A visitor interface that defines methods for each of the types
+ * derived from {@link OASType}.
+ *
+ * @param <T>  The type of the objects returned from the visitor.
+ * @param <C>  The type of the context object that is passed to the
+ *             visitor.
+ */
 public interface OASTypeVisitor<T, C> {
 
   T visitObject(OASObjectType objectType, C context);
