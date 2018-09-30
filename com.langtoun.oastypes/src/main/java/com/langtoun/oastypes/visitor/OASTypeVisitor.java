@@ -1,4 +1,4 @@
-package com.langtoun.oastypes.util;
+package com.langtoun.oastypes.visitor;
 
 import com.langtoun.oastypes.OASArrayType;
 import com.langtoun.oastypes.OASBooleanType;

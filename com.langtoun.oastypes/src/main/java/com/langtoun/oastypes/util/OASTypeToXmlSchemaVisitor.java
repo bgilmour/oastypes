@@ -12,6 +12,8 @@ import com.langtoun.oastypes.OASNumberType;
 import com.langtoun.oastypes.OASObjectType;
 import com.langtoun.oastypes.OASStringType;
 import com.langtoun.oastypes.OASType;
+import com.langtoun.oastypes.visitor.OASTypeDispatcher;
+import com.langtoun.oastypes.visitor.OASTypeVisitor;
 
 public class OASTypeToXmlSchemaVisitor implements OASTypeDispatcher<XmlSchemaType, Boolean>, OASTypeVisitor<XmlSchemaType, Boolean> {
 
