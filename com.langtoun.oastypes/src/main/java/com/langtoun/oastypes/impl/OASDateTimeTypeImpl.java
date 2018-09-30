@@ -1,9 +1,14 @@
 package com.langtoun.oastypes.impl;
 
 import com.langtoun.oastypes.OASDateTimeType;
+import com.langtoun.oastypes.OASType;
 import com.reprezen.jsonoverlay.Reference;
 import com.reprezen.kaizen.oasparser.model3.Schema;
 
+/**
+ * Implementation of {@link OASDateTimeType} that extends the {@link OASType}
+ * base class.
+ */
 public class OASDateTimeTypeImpl extends OASTypeImpl implements OASDateTimeType {
 
   private OASDateTimeTypeImpl(final Schema schema, final Reference reference) {

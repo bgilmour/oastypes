@@ -7,9 +7,14 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.langtoun.oastypes.OASIntegerType;
+import com.langtoun.oastypes.OASType;
 import com.reprezen.jsonoverlay.Reference;
 import com.reprezen.kaizen.oasparser.model3.Schema;
 
+/**
+ * Implementation of {@link OASIntegerType} that extends the {@link OASType}
+ * base class.
+ */
 public class OASIntegerTypeImpl extends OASTypeImpl implements OASIntegerType {
   // members extracted from the model
   private Number minimum;
@@ -65,6 +70,11 @@ public class OASIntegerTypeImpl extends OASTypeImpl implements OASIntegerType {
   @Override
   public boolean isExclusiveMaximum() {
     return isExclusiveMaximum;
+  }
+
+  @Override
+  public boolean hasEnums() {
+    return hasEnums;
   }
 
   @Override

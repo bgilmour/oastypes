@@ -8,6 +8,11 @@ import com.reprezen.jsonoverlay.Overlay;
 import com.reprezen.jsonoverlay.RefOverlay;
 import com.reprezen.jsonoverlay.Reference;
 
+/**
+ * Utility class for working with overlay objects from the json-overlay library.
+ *
+ * @see <a href="https://github.com/RepreZen/JsonOverlay">RepreZen JsonOverlay Library</a>
+ */
 public class OverlayUtil {
 
   /**

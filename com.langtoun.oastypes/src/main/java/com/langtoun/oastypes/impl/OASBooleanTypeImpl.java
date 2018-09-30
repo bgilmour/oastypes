@@ -1,9 +1,14 @@
 package com.langtoun.oastypes.impl;
 
 import com.langtoun.oastypes.OASBooleanType;
+import com.langtoun.oastypes.OASType;
 import com.reprezen.jsonoverlay.Reference;
 import com.reprezen.kaizen.oasparser.model3.Schema;
 
+/**
+ * Implementation of {@link OASBooleanType} that extends the {@link OASType}
+ * base class.
+ */
 public class OASBooleanTypeImpl extends OASTypeImpl implements OASBooleanType {
 
   private OASBooleanTypeImpl(final Schema schema, final Reference reference) {

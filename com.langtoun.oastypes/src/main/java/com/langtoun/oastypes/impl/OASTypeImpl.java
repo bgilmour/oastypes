@@ -7,6 +7,13 @@ import com.langtoun.oastypes.OASType;
 import com.reprezen.jsonoverlay.Reference;
 import com.reprezen.kaizen.oasparser.model3.Schema;
 
+/**
+ * Base class for OpenAPI Specification types derived from the
+ * {@link Schema} object provided by the KaiZen openapi-parser
+ * library.
+ *
+ * @see <a href="https://github.com/RepreZen/KaiZen-OpenApi-Parser">KaiZen-OpenApi-Parser</a>
+ */
 public class OASTypeImpl implements OASType {
   // cached schema and reference objects
   protected final Schema schema;

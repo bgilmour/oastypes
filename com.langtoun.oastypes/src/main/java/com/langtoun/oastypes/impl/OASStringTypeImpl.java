@@ -7,9 +7,14 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.langtoun.oastypes.OASStringType;
+import com.langtoun.oastypes.OASType;
 import com.reprezen.jsonoverlay.Reference;
 import com.reprezen.kaizen.oasparser.model3.Schema;
 
+/**
+ * Implementation of {@link OASStringType} that extends the {@link OASType}
+ * base class.
+ */
 public class OASStringTypeImpl extends OASTypeImpl implements OASStringType {
   // members extracted from the model
   private Integer minLength;
@@ -43,6 +48,11 @@ public class OASStringTypeImpl extends OASTypeImpl implements OASStringType {
   @Override
   public List<String> enums() {
     return enums;
+  }
+
+  @Override
+  public boolean hasEnums() {
+    return hasEnums;
   }
 
   @Override
