@@ -161,11 +161,7 @@ class XmlSchemaWriter {
   '''
 
   def dispatch CharSequence writeSchema(XmlSchemaAny any) '''
-«««    «IF !Option.skipAnyElements.set»
-«««      <«xsd»any maxOccurs="unbounded" minOccurs="0" processContents="skip"/>
-«««    «ELSE»
-      <!-- Skip <«xsd»any> elements for now -->
-«««    «ENDIF»
+    <!-- Skip <«xsd»any> elements for now -->
   '''
 
   def dispatch CharSequence writeSchema(XmlSchemaArrayType array) '''
