@@ -5,13 +5,23 @@ import java.util.Map;
 
 import com.reprezen.kaizen.oasparser.model3.Schema;
 
+/**
+ * Public interface for OpenAPI specification object types. Objects of this
+ * type are derived from YAML like this:
+ * <pre><code>
+ *   type: object
+ *   required: ...
+ *   properties: ...
+ * </code></pre>
+ */
 public interface OASObjectType extends OASType {
 
   /**
    * A list of property names corresponding to those that have been designated
    * required.
    *
-   * @return The value of the {@code required} node.
+   * @return The list of {@code required} property names. This list is never
+   *         {@code null}.
    */
   List<String> required();
 
@@ -28,7 +38,7 @@ public interface OASObjectType extends OASType {
    * JSON Schema (inline or referenced).
    *
    * @return A map of property names and {@link OASType} objects built from the
-   *         entries in the {@code properties} node.
+   *         entries in the {@code properties} node. This map is never {@code null}.
    */
   Map<String, OASType> properties();
 
@@ -45,5 +55,19 @@ public interface OASObjectType extends OASType {
    * @return The value of the {@code maxProperties} node.
    */
   Integer maxProperties();
+
+  /**
+   * This method determines whether or not the {@code required} node was present.
+   *
+   * @return {code true} if the node was present, otherwise {@code false}.
+   */
+  boolean hasRequired();
+
+  /**
+   * This method determines whether or not the {@code properties} node was present.
+   *
+   * @return {code true} if the node was present, otherwise {@code false}.
+   */
+  boolean hasProperties();
 
 }

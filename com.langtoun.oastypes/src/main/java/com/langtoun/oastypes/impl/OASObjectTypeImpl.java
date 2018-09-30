@@ -1,8 +1,8 @@
 package com.langtoun.oastypes.impl;
 
+import static com.langtoun.oastypes.util.CollectorUtil.toLinkedMap;
 import static com.langtoun.oastypes.util.StringExtensions.doubleQuote;
 import static org.apache.commons.text.StringEscapeUtils.escapeJson;
-import static com.langtoun.oastypes.util.CollectorUtil.toLinkedMap;
 
 import java.util.AbstractMap;
 import java.util.List;
@@ -17,6 +17,10 @@ import com.reprezen.jsonoverlay.Overlay;
 import com.reprezen.jsonoverlay.Reference;
 import com.reprezen.kaizen.oasparser.model3.Schema;
 
+/**
+ * Implementation of {@link OASObjectType} that extends the {@link OASType}
+ * base class.
+ */
 public class OASObjectTypeImpl extends OASTypeImpl implements OASObjectType {
   // members extracted from the model
   private List<String> required;
@@ -57,6 +61,16 @@ public class OASObjectTypeImpl extends OASTypeImpl implements OASObjectType {
   @Override
   public Integer maxProperties() {
     return maxProperties;
+  }
+
+  @Override
+  public boolean hasRequired() {
+    return hasRequired;
+  }
+
+  @Override
+  public boolean hasProperties() {
+    return hasProperties;
   }
 
   @Override

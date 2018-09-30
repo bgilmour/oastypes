@@ -11,6 +11,10 @@ import com.reprezen.jsonoverlay.Overlay;
 import com.reprezen.jsonoverlay.Reference;
 import com.reprezen.kaizen.oasparser.model3.Schema;
 
+/**
+ * Implementation of {@link OASArrayType} that extends the {@link OASType}
+ * base class.
+ */
 public class OASArrayTypeImpl extends OASTypeImpl implements OASArrayType {
   // members extracted from the model
   private OASType items;

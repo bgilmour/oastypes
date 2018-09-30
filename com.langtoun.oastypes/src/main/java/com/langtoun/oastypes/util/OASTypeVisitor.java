@@ -20,22 +20,94 @@ import com.langtoun.oastypes.OASStringType;
  */
 public interface OASTypeVisitor<T, C> {
 
+  /**
+   * Visit an object of type {@link OASObjectType} and create a new object
+   * of type T.
+   *
+   * @param objectType  The object being visited.
+   * @param context  This visiting context.
+   * @return The new object of type T.
+   */
   T visitObject(OASObjectType objectType, C context);
 
+  /**
+   * Visit an object of type {@link OASArrayType} and create a new object
+   * of type T.
+   *
+   * @param objectType  The object being visited.
+   * @param context  This visiting context.
+   * @return The new object of type T.
+   */
   T visitArray(OASArrayType arrayType, C context);
 
+  /**
+   * Visit an object of type {@link OASStringType} and create a new object
+   * of type T.
+   *
+   * @param objectType  The object being visited.
+   * @param context  This visiting context.
+   * @return The new object of type T.
+   */
   T visitString(OASStringType stringType, C context);
 
+  /**
+   * Visit an object of type {@link OASNumberType} and create a new object
+   * of type T.
+   *
+   * @param objectType  The object being visited.
+   * @param context  This visiting context.
+   * @return The new object of type T.
+   */
   T visitNumber(OASNumberType numberType, C context);
 
+  /**
+   * Visit an object of type {@link OASIntegerType} and create a new object
+   * of type T.
+   *
+   * @param objectType  The object being visited.
+   * @param context  This visiting context.
+   * @return The new object of type T.
+   */
   T visitInteger(OASIntegerType integerType, C context);
 
+  /**
+   * Visit an object of type {@link OASBooleanType} and create a new object
+   * of type T.
+   *
+   * @param objectType  The object being visited.
+   * @param context  This visiting context.
+   * @return The new object of type T.
+   */
   T visitBoolean(OASBooleanType booleanType, C context);
 
+  /**
+   * Visit an object of type {@link OASDateType} and create a new object
+   * of type T.
+   *
+   * @param objectType  The object being visited.
+   * @param context  This visiting context.
+   * @return The new object of type T.
+   */
   T visitDate(OASDateType dateType, C context);
 
+  /**
+   * Visit an object of type {@link OASDateTimeType} and create a new object
+   * of type T.
+   *
+   * @param objectType  The object being visited.
+   * @param context  This visiting context.
+   * @return The new object of type T.
+   */
   T visitDateTime(OASDateTimeType dateTimeType, C context);
 
+  /**
+   * Visit an object of type {@link OASNullType} and create a new object
+   * of type T.
+   *
+   * @param objectType  The object being visited.
+   * @param context  This visiting context.
+   * @return The new object of type T.
+   */
   T visitNull(OASNullType nullType, C context);
 
 }

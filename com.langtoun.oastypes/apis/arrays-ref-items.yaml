@@ -53,6 +53,11 @@ components:
     A1:
       type: array
       items:
+        $ref: '#/components/schemas/S1'
+
+    A2:
+      type: array
+      items:
         $ref: '#/components/schemas/O1'
 
 

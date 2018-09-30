@@ -1,5 +1,13 @@
 package com.langtoun.oastypes;
 
+/**
+ * Public interface for OpenAPI specification array types. Objects of this
+ * type are derived from YAML like this:
+ * <pre><code>
+ *   type: array
+ *   items: ...
+ * </code></pre>
+ */
 public interface OASArrayType extends OASType {
 
   /**

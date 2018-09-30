@@ -127,14 +127,43 @@ public interface OASType {
    */
   Boolean deprecated();
 
+  /**
+   * This method computes whether or not the type is nullable.
+   *
+   * @return If the {@code nullable} node is present then its value is used,
+   *         otherwise it is {@code false}.
+   */
   boolean isNullable();
 
+  /**
+   * This method computes whether or not the type is read only.
+   *
+   * @return If the {@code readOnly} node is present then its value is used,
+   *         otherwise it is {@code false}.
+   */
   boolean isReadOnly();
 
+  /**
+   * This method computes whether or not the type is write only.
+   *
+   * @return If the {@code writeOnly} node is present then its value is used,
+   *         otherwise it is {@code false}.
+   */
   boolean isWriteOnly();
 
+  /**
+   * This method computes whether or not the type is deprecated.
+   *
+   * @return If the {@code deprecated} node is present then its value is used,
+   *         otherwise it is {@code false}.
+   */
   boolean isDeprecated();
 
+  /**
+   * Create a JSON representation of an OASType object.
+   *
+   * @return A string containing the JSON representation.
+   */
   String toJson();
 
 }
