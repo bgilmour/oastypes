@@ -1,5 +1,7 @@
 package com.langtoun.oastypes.util;
 
+import org.apache.log4j.Logger;
+
 import com.langtoun.oastypes.OASType;
 import com.langtoun.oastypes.impl.OASArrayTypeImpl;
 import com.langtoun.oastypes.impl.OASBooleanTypeImpl;
@@ -14,29 +16,39 @@ import com.reprezen.kaizen.oasparser.model3.Schema;
 
 public class OASTypeFactory {
 
-  public static OASType createOASType(final Schema schema, final Reference reference) {
-    OASType oasType = null;
+  private static Logger LOGGER = Logger.getLogger(OASTypeFactory.class);
+
+  public static OASType createOASType(final String mappedName, final Schema schema, final Reference reference) {
+    return createOASType(null, mappedName, schema, reference);
+  }
+
+  public static OASType createOASType(final OASType parent, final String mappedName, final Schema schema, final Reference reference) {
     /*
-     * handle Schema Object cases
+     * handle schema object cases
      *
      * - [x] anonymous objects
      * - [x] scalar types
      * - [/] arrays (partial handling - items can be any of the other options)
-     * - [ ] $ref
+     * - [/] $ref
      * - [ ] allOf
      * - [ ] anyOf
+     *
      */
-    System.out.printf("    --> OASTypeFactory: %s:%s from %s\n", schema.getName(), schema.getType(), schema);
-    if (reference != null) {
-      System.out.printf("        [$ref: %s]\n", reference.getRefString());
-    } else {
-      System.out.println("        [$ref: null]");
+    final OASType oasType;
+
+    String schemaType = schema.getType();
+    if (schemaType == null) {
+      if (schema.hasProperties() || schema.hasAllOfSchemas()) {
+        schemaType = "object";
+      } else if (schema.getItemsSchema() != null) {
+        schemaType = "array";
+      }
     }
-    final String schemaType = schema.getType() != null ? schema.getType() : "object";
+
     switch (schemaType) {
       case "object":
         oasType =
-          OASObjectTypeImpl.builder(schema, reference)
+          OASObjectTypeImpl.builder(parent, mappedName, schemaType, schema, reference)
             .required()
             .properties()
             .minProperties()
@@ -45,7 +57,7 @@ public class OASTypeFactory {
         break;
       case "array":
         oasType =
-          OASArrayTypeImpl.builder(schema, reference)
+          OASArrayTypeImpl.builder(parent, mappedName, schemaType, schema, reference)
             .items()
             .minItems()
             .maxItems()
@@ -55,15 +67,15 @@ public class OASTypeFactory {
       case "string":
         if (schema.getFormat() != null && "date".equals(schema.getFormat())) {
           oasType =
-            OASDateTypeImpl.builder(schema, reference)
+            OASDateTypeImpl.builder(parent, mappedName, schemaType, schema, reference)
               .build();
         } else if (schema.getFormat() != null && "date-time".equals(schema.getFormat())) {
           oasType =
-            OASDateTimeTypeImpl.builder(schema, reference)
+            OASDateTimeTypeImpl.builder(parent, mappedName, schemaType, schema, reference)
               .build();
         } else {
           oasType =
-            OASStringTypeImpl.builder(schema, reference)
+            OASStringTypeImpl.builder(parent, mappedName, schemaType, schema, reference)
               .minLength()
               .maxLength()
               .pattern()
@@ -73,7 +85,7 @@ public class OASTypeFactory {
         break;
       case "number":
         oasType =
-          OASNumberTypeImpl.builder(schema, reference)
+          OASNumberTypeImpl.builder(parent, mappedName, schemaType, schema, reference)
             .minimum()
             .maximum()
             .exclusiveMinimum()
@@ -83,7 +95,7 @@ public class OASTypeFactory {
         break;
       case "integer":
         oasType =
-          OASIntegerTypeImpl.builder(schema, reference)
+          OASIntegerTypeImpl.builder(parent, mappedName, schemaType, schema, reference)
             .minimum()
             .maximum()
             .exclusiveMinimum()
@@ -93,13 +105,14 @@ public class OASTypeFactory {
         break;
       case "boolean":
         oasType =
-            OASBooleanTypeImpl.builder(schema, reference)
-              .build();
+          OASBooleanTypeImpl.builder(parent, mappedName, schemaType, schema, reference)
+            .build();
         break;
       default:
+        LOGGER.error("Failed to create OASType from: " + schema);
+        oasType = null;
         break;
     }
-    System.out.printf("    <-- OASTypeFactory: %s\n", (oasType != null ? oasType.getClass().getSimpleName() : "null"));
     return oasType;
   }
 

@@ -2,6 +2,7 @@ package com.langtoun.oastypes.util;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Map;
 
 import com.reprezen.jsonoverlay.JsonOverlay;
 import com.reprezen.jsonoverlay.Overlay;
@@ -40,13 +41,14 @@ public class OverlayUtil {
    * {@link JsonOverlay} as the starting point. This method breaks the encapsulation
    * of the json-overlay library through use of reflection to find and invoke the
    * private method {@code _getRefOverlay). The documented method for retrieving a
-   * {@code Reference} from an object field (when the object isn't a {@link PropertiesOverlay},
+   * {@link Reference} from an object field (when the object isn't a {@link PropertiesOverlay},
    * a {@link MapOverlay}, or a {@link ListOverlay}), never returns a reference.
    *
    * @param <T>  The type of the OAS model3 object that may be defined by reference.
    * @param jsonOverlay  A {@link JsonOverlay} for an object of type T that may be
    *                     defined by reference.
    * @return The {@link Reference} that defines the object of type T, or {@code null}
+   *         if the object is not defined by reference.
    */
   @SuppressWarnings("unchecked")
   public static <T> Reference getReference(final JsonOverlay<T> jsonOverlay) {
@@ -73,14 +75,29 @@ public class OverlayUtil {
    *
    * @param <T>  The type of the OAS model3 object that may be defined by reference.
    * @param refOverlay  A {@link RefOverlay} for an object of type T that may be
-   *                     defined by reference.
+   *                    defined by reference.
    * @return The {@link Reference} that defines the object of type T, or {@code null}
+   *         if the object is not defined by reference.
    */
   public static <T> Reference getReference(final RefOverlay<T> refOverlay) {
     if (refOverlay != null) {
       return refOverlay._getReference();
     }
     return null;
+  }
+
+  /**
+   * Get the {@link Reference} associated with the mapped items with the specified
+   * key. The reference may be {@code null}.
+   *
+   * @param <T>  The type of the OAS model3 object that may be defined by reference.
+   * @param mappedItems  The map containing the item whose reference is to be retrieved.
+   * @param key  Identifier for the item whose reference is to be retrieved.
+   * @return The {@link Reference} that defines the object of type T, or {@code null}
+   *         if the object is not defined by reference.
+   */
+  public static <T> Reference getReference(Map<String, T> mappedItems, String key) {
+    return Overlay.of(mappedItems).getReference(key);
   }
 
 }

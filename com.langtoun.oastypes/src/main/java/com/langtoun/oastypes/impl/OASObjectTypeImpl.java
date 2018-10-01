@@ -1,6 +1,7 @@
 package com.langtoun.oastypes.impl;
 
 import static com.langtoun.oastypes.util.CollectorUtil.toLinkedMap;
+import static com.langtoun.oastypes.util.OverlayUtil.getReference;
 import static com.langtoun.oastypes.util.StringExtensions.doubleQuote;
 import static org.apache.commons.text.StringEscapeUtils.escapeJson;
 
@@ -13,7 +14,6 @@ import java.util.stream.Collectors;
 import com.langtoun.oastypes.OASObjectType;
 import com.langtoun.oastypes.OASType;
 import com.langtoun.oastypes.util.OASTypeFactory;
-import com.reprezen.jsonoverlay.Overlay;
 import com.reprezen.jsonoverlay.Reference;
 import com.reprezen.kaizen.oasparser.model3.Schema;
 
@@ -31,8 +31,20 @@ public class OASObjectTypeImpl extends OASTypeImpl implements OASObjectType {
   private boolean hasRequired;
   private boolean hasProperties;
 
-  private OASObjectTypeImpl(final Schema schema, final Reference reference) {
-    super(schema, reference);
+  /**
+   * Private constructor for an {@link OASObjectTypeImpl} base object. Objects must be
+   * created using the builder.
+   *
+   * @param parent  The parent of this type.
+   * @param mappedName  The name of the node that a schema is attached to. For top level
+   *                    schemas this is the name of the type.
+   * @param schemaType  The resolved schema type name.
+   * @param schema  The {@link Schema} that will be used to build the {@link OASObjectTypeImpl}.
+   * @param reference  A {@link Reference} associated with the schema which may be {@code null}.
+   * @return The {@link OASObjectTypeImpl} object.
+   */
+  private OASObjectTypeImpl(final OASType parent, final String mappedName, final String schemaType, final Schema schema, final Reference reference) {
+    super(parent, mappedName, schemaType, schema, reference);
     // members computed from the model
     this.hasRequired = schema.hasRequiredFields();
     this.hasProperties = schema.hasProperties();
@@ -104,20 +116,24 @@ public class OASObjectTypeImpl extends OASTypeImpl implements OASObjectType {
   /**
    * Create a new builder for an {@link OASObjectTypeImpl} object.
    *
+   * @param parent  The parent of this type.
+   * @param mappedName  The name of the node that a schema is attached to. For top level
+   *                    schemas this is the name of the type.
+   * @param schemaType  The resolved schema type name.
    * @param schema  The {@link Schema} that will be used to build the {@link OASObjectTypeImpl}.
    * @param reference  A {@link Reference} associated with the schema which may be {@code null}.
    * @return The {@link Builder} object.
    */
-  public static Builder builder(final Schema schema, final Reference reference) {
-    return new Builder(schema, reference);
+  public static Builder builder(final OASType parent, final String mappedName, final String schemaType, final Schema schema, final Reference reference) {
+    return new Builder(parent, mappedName, schemaType, schema, reference);
   }
 
   public static class Builder {
     private final OASObjectTypeImpl oasObjectType;
     private final Schema schema;
 
-    private Builder(final Schema schema, final Reference reference) {
-      oasObjectType = new OASObjectTypeImpl(schema, reference);
+    private Builder(final OASType parent, final String mappedName, final String schemaType, final Schema schema, final Reference reference) {
+      oasObjectType = new OASObjectTypeImpl(parent, mappedName, schemaType, schema, reference);
       this.schema = schema;
     }
 
@@ -136,7 +152,7 @@ public class OASObjectTypeImpl extends OASTypeImpl implements OASObjectType {
           .map(e ->
             new AbstractMap.SimpleEntry<>(
               e.getKey(),
-              OASTypeFactory.createOASType(e.getValue(), Overlay.of(properties).getReference(e.getKey()))
+              OASTypeFactory.createOASType(oasObjectType, e.getKey(), e.getValue(), getReference(properties, e.getKey()))
             )
           )
           .collect(toLinkedMap(Entry::getKey, Entry::getValue));

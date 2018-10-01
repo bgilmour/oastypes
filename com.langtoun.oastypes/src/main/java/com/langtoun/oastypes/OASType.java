@@ -19,6 +19,13 @@ import com.reprezen.kaizen.oasparser.model3.Schema;
 public interface OASType {
 
   /**
+   * Access the parent of this type.
+   *
+   * @return The parent type.
+   */
+  OASType parent();
+
+  /**
    * Access the {@link Schema} object from the OpenApi3 model that was used
    * to create this {@link OASType} object.
    *
@@ -42,6 +49,15 @@ public interface OASType {
    * @return {@code true} if the schema is a reference, otherwise {@code false}.
    */
   boolean isReference();
+
+  /**
+   * The mapped name of a type. For top level type definitions this will be the
+   * same as that returned from the {@code name()} method. In other cases it will
+   * be the name of the node that the type is attached to.
+   *
+   * @return The mapped name of the type.
+   */
+  String mappedName();
 
   /**
    * The name associated with a {@link Schema} object.
