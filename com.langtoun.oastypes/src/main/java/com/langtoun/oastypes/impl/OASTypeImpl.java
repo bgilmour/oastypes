@@ -15,9 +15,11 @@ import com.reprezen.kaizen.oasparser.model3.Schema;
  * @see <a href="https://github.com/RepreZen/KaiZen-OpenApi-Parser">KaiZen-OpenApi-Parser</a>
  */
 public class OASTypeImpl implements OASType {
+  protected final OASType parent;
   // cached schema and reference objects
   protected final Schema schema;
   protected final Reference reference;
+  protected final String mappedName;
   // members extracted from the model
   private final String name;
   private final String type;
@@ -34,13 +36,26 @@ public class OASTypeImpl implements OASType {
   private final boolean isWriteOnly;
   private final boolean isDeprecated;
 
-  protected OASTypeImpl(final Schema schema, final Reference reference) {
+  /**
+   * Protected constructor for an {@link OASTypeImpl} base object.
+   *
+   * @param parent  The parent of this type.
+   * @param mappedName  The name of the node that a schema is attached to. For top level
+   *                    schemas this is the name of the type.
+   * @param schemaType  The resolved schema type name.
+   * @param schema  The {@link Schema} that will be used to build the {@link OASTypeImpl}.
+   * @param reference  A {@link Reference} associated with the schema which may be {@code null}.
+   * @return The {@link OASTypeImpl} object.
+   */
+  protected OASTypeImpl(final OASType parent, final String mappedName, final String schemaType, final Schema schema, final Reference reference) {
+    this.parent = parent;
     // cached schema object
     this.schema = schema;
     this.reference = reference;
+    this.mappedName = mappedName;
     // members extracted from the model
     this.name = schema.getName();
-    this.type = schema.getType();
+    this.type = schemaType;
     this.format = schema.getFormat();
     this.description = schema.getDescription();
     this.defaultValue = schema.getDefault();
@@ -56,6 +71,11 @@ public class OASTypeImpl implements OASType {
   }
 
   @Override
+  public OASType parent() {
+    return parent;
+  }
+
+  @Override
   public Schema schema() {
     return schema;
   }
@@ -68,6 +88,11 @@ public class OASTypeImpl implements OASType {
   @Override
   public boolean isReference() {
     return reference != null;
+  }
+
+  @Override
+  public String mappedName() {
+    return mappedName;
   }
 
   @Override

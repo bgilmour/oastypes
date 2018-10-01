@@ -28,8 +28,20 @@ public class OASNumberTypeImpl extends OASTypeImpl implements OASNumberType {
   private boolean isExclusiveMaximum;
   private boolean hasEnums;
 
-  private OASNumberTypeImpl(final Schema schema, final Reference reference) {
-    super(schema, reference);
+  /**
+   * Private constructor for an {@link OASNumberTypeImpl} base object. Objects must be
+   * created using the builder.
+   *
+   * @param parent  The parent of this type.
+   * @param mappedName  The name of the node that a schema is attached to. For top level
+   *                    schemas this is the name of the type.
+   * @param schemaType  The resolved schema type name.
+   * @param schema  The {@link Schema} that will be used to build the {@link OASNumberTypeImpl}.
+   * @param reference  A {@link Reference} associated with the schema which may be {@code null}.
+   * @return The {@link OASNumberTypeImpl} object.
+   */
+  private OASNumberTypeImpl(final OASType parent, final String mappedName, final String schemaType, final Schema schema, final Reference reference) {
+    super(parent, mappedName, schemaType, schema, reference);
     // members computed from the model
     this.isDouble = format() == null || "double".equals(format());
     this.isExclusiveMinimum = schema.isExclusiveMinimum();
@@ -113,20 +125,24 @@ public class OASNumberTypeImpl extends OASTypeImpl implements OASNumberType {
   /**
    * Create a new builder for an {@link OASNumberTypeImpl} object.
    *
+   * @param parent  The parent of this type.
+   * @param mappedName  The name of the node that a schema is attached to. For top level
+   *                    schemas this is the name of the type.
+   * @param schemaType  The resolved schema type name.
    * @param schema  The {@link Schema} that will be used to build the {@link OASNumberTypeImpl}.
    * @param reference  A {@link Reference} associated with the schema which may be {@code null}.
    * @return The {@link Builder} object.
    */
-  public static Builder builder(final Schema schema, final Reference reference) {
-    return new Builder(schema, reference);
+  public static Builder builder(final OASType parent, final String mappedName, final String schemaType, final Schema schema, final Reference reference) {
+    return new Builder(parent, mappedName, schemaType, schema, reference);
   }
 
   public static class Builder {
     private final OASNumberTypeImpl oasNumberType;
     private final Schema schema;
 
-    private Builder(final Schema schema, final Reference reference) {
-      oasNumberType = new OASNumberTypeImpl(schema, reference);
+    private Builder(final OASType parent, final String mappedName, final String schemaType, final Schema schema, final Reference reference) {
+      oasNumberType = new OASNumberTypeImpl(parent, mappedName, schemaType, schema, reference);
       this.schema = schema;
     }
 
