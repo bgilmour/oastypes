@@ -9,6 +9,7 @@ import com.langtoun.oastypes.OASNullType;
 import com.langtoun.oastypes.OASNumberType;
 import com.langtoun.oastypes.OASObjectType;
 import com.langtoun.oastypes.OASStringType;
+import com.langtoun.oastypes.OASType;
 
 /**
  * A visitor interface that defines methods for each of the types

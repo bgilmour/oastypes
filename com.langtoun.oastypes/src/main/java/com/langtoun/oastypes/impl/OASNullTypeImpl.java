@@ -26,7 +26,6 @@ public class OASNullTypeImpl extends OASTypeImpl implements OASNullType {
    *          The {@link Schema} that will be used to build the {@link OASNullTypeImpl}.
    * @param reference
    *          A {@link Reference} associated with the schema which may be {@code null}.
-   * @return The {@link OASNullTypeImpl} object.
    */
   private OASNullTypeImpl(final OASType parent, final String mappedName, final String schemaType, final Schema schema, final Reference reference) {
     super(parent, mappedName, schemaType, schema, reference);

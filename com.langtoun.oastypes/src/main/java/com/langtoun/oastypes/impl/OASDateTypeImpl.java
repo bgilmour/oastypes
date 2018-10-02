@@ -26,7 +26,6 @@ public class OASDateTypeImpl extends OASTypeImpl implements OASDateType {
    *          The {@link Schema} that will be used to build the {@link OASDateTypeImpl}.
    * @param reference
    *          A {@link Reference} associated with the schema which may be {@code null}.
-   * @return The {@link OASDateTypeImpl} object.
    */
   private OASDateTypeImpl(final OASType parent, final String mappedName, final String schemaType, final Schema schema, final Reference reference) {
     super(parent, mappedName, schemaType, schema, reference);

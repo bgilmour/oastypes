@@ -46,7 +46,6 @@ public class OASObjectTypeImpl extends OASTypeImpl implements OASObjectType {
    *          The {@link Schema} that will be used to build the {@link OASObjectTypeImpl}.
    * @param reference
    *          A {@link Reference} associated with the schema which may be {@code null}.
-   * @return The {@link OASObjectTypeImpl} object.
    */
   private OASObjectTypeImpl(final OASType parent, final String mappedName, final String schemaType, final Schema schema, final Reference reference) {
     super(parent, mappedName, schemaType, schema, reference);

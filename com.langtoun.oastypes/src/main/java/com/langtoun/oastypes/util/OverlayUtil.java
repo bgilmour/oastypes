@@ -5,7 +5,10 @@ import java.lang.reflect.Method;
 import java.util.Map;
 
 import com.reprezen.jsonoverlay.JsonOverlay;
+import com.reprezen.jsonoverlay.ListOverlay;
+import com.reprezen.jsonoverlay.MapOverlay;
 import com.reprezen.jsonoverlay.Overlay;
+import com.reprezen.jsonoverlay.PropertiesOverlay;
 import com.reprezen.jsonoverlay.RefOverlay;
 import com.reprezen.jsonoverlay.Reference;
 
@@ -42,7 +45,7 @@ public class OverlayUtil {
    * Get the {@link Reference} used to define an object of type T using a
    * {@link JsonOverlay} as the starting point. This method breaks the encapsulation
    * of the json-overlay library through use of reflection to find and invoke the
-   * private method {@code _getRefOverlay). The documented method for retrieving a
+   * private method {@code _getRefOverlay}. The documented method for retrieving a
    * {@link Reference} from an object field (when the object isn't a {@link PropertiesOverlay},
    * a {@link MapOverlay}, or a {@link ListOverlay}), never returns a reference.
    *

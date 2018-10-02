@@ -39,7 +39,6 @@ public class OASStringTypeImpl extends OASTypeImpl implements OASStringType {
    *          The {@link Schema} that will be used to build the {@link OASStringTypeImpl}.
    * @param reference
    *          A {@link Reference} associated with the schema which may be {@code null}.
-   * @return The {@link OASStringTypeImpl} object.
    */
   private OASStringTypeImpl(final OASType parent, final String mappedName, final String schemaType, final Schema schema, final Reference reference) {
     super(parent, mappedName, schemaType, schema, reference);

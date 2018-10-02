@@ -67,7 +67,7 @@ public final class SchemaVisitorContext {
   /**
    * Check whether a type declaration has already been visited.
    *
-   * @param typeDecl
+   * @param oasType
    *          The type declaration that is to be checked.
    * @return {@code true} if the type has been visited, otherwise {@code false}.
    */
@@ -78,7 +78,7 @@ public final class SchemaVisitorContext {
   /**
    * Add a type declaration to the set of those already visited.
    *
-   * @param typeDecl
+   * @param oasType
    *          The type declaration to be added.
    */
   public void addVisitedType(final OASType oasType) {

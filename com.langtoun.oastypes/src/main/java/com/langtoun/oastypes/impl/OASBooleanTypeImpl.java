@@ -26,7 +26,6 @@ public class OASBooleanTypeImpl extends OASTypeImpl implements OASBooleanType {
    *          The {@link Schema} that will be used to build the {@link OASBooleanTypeImpl}.
    * @param reference
    *          A {@link Reference} associated with the schema which may be {@code null}.
-   * @return The {@link OASBooleanTypeImpl} object.
    */
   private OASBooleanTypeImpl(final OASType parent, final String mappedName, final String schemaType, final Schema schema, final Reference reference) {
     super(parent, mappedName, schemaType, schema, reference);

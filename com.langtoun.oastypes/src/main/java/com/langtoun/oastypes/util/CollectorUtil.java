@@ -11,6 +11,8 @@ import java.util.stream.Collectors;
  */
 public final class CollectorUtil {
 
+  private CollectorUtil() {}
+
   /**
    * Create a two parameter collector method that creates a new collector
    * backed by a {@link LinkedHashMap}.

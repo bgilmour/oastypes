@@ -39,7 +39,6 @@ public class OASArrayTypeImpl extends OASTypeImpl implements OASArrayType {
    *          The {@link Schema} that will be used to build the {@link OASArrayTypeImpl}.
    * @param reference
    *          A {@link Reference} associated with the schema which may be {@code null}.
-   * @return The {@link OASArrayTypeImpl} object.
    */
   private OASArrayTypeImpl(final OASType parent, final String mappedName, final String schemaType, final Schema schema, final Reference reference) {
     super(parent, mappedName, schemaType, schema, reference);

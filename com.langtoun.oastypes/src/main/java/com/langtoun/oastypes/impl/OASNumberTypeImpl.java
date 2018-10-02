@@ -44,7 +44,6 @@ public class OASNumberTypeImpl extends OASTypeImpl implements OASNumberType {
    *          The {@link Schema} that will be used to build the {@link OASNumberTypeImpl}.
    * @param reference
    *          A {@link Reference} associated with the schema which may be {@code null}.
-   * @return The {@link OASNumberTypeImpl} object.
    */
   private OASNumberTypeImpl(final OASType parent, final String mappedName, final String schemaType, final Schema schema, final Reference reference) {
     super(parent, mappedName, schemaType, schema, reference);

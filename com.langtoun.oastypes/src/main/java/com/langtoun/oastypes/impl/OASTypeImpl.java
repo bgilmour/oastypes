@@ -51,7 +51,6 @@ public class OASTypeImpl implements OASType {
    *          The {@link Schema} that will be used to build the {@link OASTypeImpl}.
    * @param reference
    *          A {@link Reference} associated with the schema which may be {@code null}.
-   * @return The {@link OASTypeImpl} object.
    */
   protected OASTypeImpl(final OASType parent, final String mappedName, final String schemaType, final Schema schema, final Reference reference) {
     this.parent = parent;
