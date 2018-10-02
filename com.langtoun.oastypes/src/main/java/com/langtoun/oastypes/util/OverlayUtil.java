@@ -20,9 +20,11 @@ public class OverlayUtil {
    * Get the {@link Reference} used to define an object of type T using an
    * {@link Overlay} as the starting point.
    *
-   * @param <T>  The type of the OAS model3 object that may be defined by reference.
-   * @param overlay  An {@link Overlay} for an object of type T that may be defined
-   *                 by reference.
+   * @param <T>
+   *          The type of the OAS model3 object that may be defined by reference.
+   * @param overlay
+   *          An {@link Overlay} for an object of type T that may be defined
+   *          by reference.
    * @return The {@link Reference} that defines the object of type T, or {@code null}
    *         if the object is not defined by reference.
    */
@@ -44,9 +46,11 @@ public class OverlayUtil {
    * {@link Reference} from an object field (when the object isn't a {@link PropertiesOverlay},
    * a {@link MapOverlay}, or a {@link ListOverlay}), never returns a reference.
    *
-   * @param <T>  The type of the OAS model3 object that may be defined by reference.
-   * @param jsonOverlay  A {@link JsonOverlay} for an object of type T that may be
-   *                     defined by reference.
+   * @param <T>
+   *          The type of the OAS model3 object that may be defined by reference.
+   * @param jsonOverlay
+   *          A {@link JsonOverlay} for an object of type T that may be
+   *          defined by reference.
    * @return The {@link Reference} that defines the object of type T, or {@code null}
    *         if the object is not defined by reference.
    */
@@ -73,9 +77,11 @@ public class OverlayUtil {
    * Get the {@link Reference} used to define an object of type T using a
    * {@link RefOverlay} as the starting point.
    *
-   * @param <T>  The type of the OAS model3 object that may be defined by reference.
-   * @param refOverlay  A {@link RefOverlay} for an object of type T that may be
-   *                    defined by reference.
+   * @param <T>
+   *          The type of the OAS model3 object that may be defined by reference.
+   * @param refOverlay
+   *          A {@link RefOverlay} for an object of type T that may be
+   *          defined by reference.
    * @return The {@link Reference} that defines the object of type T, or {@code null}
    *         if the object is not defined by reference.
    */
@@ -90,9 +96,12 @@ public class OverlayUtil {
    * Get the {@link Reference} associated with the mapped items with the specified
    * key. The reference may be {@code null}.
    *
-   * @param <T>  The type of the OAS model3 object that may be defined by reference.
-   * @param mappedItems  The map containing the item whose reference is to be retrieved.
-   * @param key  Identifier for the item whose reference is to be retrieved.
+   * @param <T>
+   *          The type of the OAS model3 object that may be defined by reference.
+   * @param mappedItems
+   *          The map containing the item whose reference is to be retrieved.
+   * @param key
+   *          Identifier for the item whose reference is to be retrieved.
    * @return The {@link Reference} that defines the object of type T, or {@code null}
    *         if the object is not defined by reference.
    */

@@ -14,6 +14,9 @@ import java.util.Map;
 import java.util.Set;
 import org.eclipse.xtext.xbase.lib.CollectionLiterals;
 
+/**
+ * Static class that implements a deep comparison of two type definitions.
+ */
 @SuppressWarnings("all")
 public class OASTypeEquality {
   /**
@@ -21,10 +24,10 @@ public class OASTypeEquality {
    * both objects are of the same type before proceeding to the recursive comparison.
    * 
    * @param td1
-   *          the first type declaration object
+   *          The first type declaration object.
    * @param td2
-   *          the second type declaration object
-   * @result {code true} if the types are equal, otherwise {@code false}
+   *          The second type declaration object.
+   * @result {code true} if the types are equal, otherwise {@code false}.
    */
   public static boolean equals(final OASType td1, final OASType td2) {
     if (((td1 == null) && (td2 == null))) {

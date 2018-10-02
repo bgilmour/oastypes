@@ -30,10 +30,11 @@ public final class TraceLogger {
    * Configure the trace logger. This is where any customer appenders could be added.
    *
    * @param callerLabel
-   *          label identifying the component that called the module with trace level logging enabled
+   *          Label identifying the component that called the module with trace level
+   *          logging enabled.
    * @param enableTrace
-   *          a boolean that determines whether or not to enable trace level logging
-   * @return a new {@link Logger} instance
+   *          A boolean that determines whether or not to enable trace level logging.
+   * @return A new {@link Logger} instance.
    */
   public static TraceLogger newLogger(final String callerLabel, final boolean enableTrace) {
     return new TraceLogger(callerLabel, enableTrace);
@@ -58,7 +59,7 @@ public final class TraceLogger {
    * according to the current indentation level.
    *
    * @param message
-   *          the message to be logged
+   *          The message to be logged.
    */
   public void log(final String message) {
     if (enableTrace) {

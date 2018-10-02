@@ -26,8 +26,10 @@ public class StringExtensions {
    * A utility method that uses the first and last characters in the {code quotes}
    * string to prefix and suffix the target string.
    * 
-   * @param str  The string that is to be quoted.
-   * @param quotes  The string that provides the quotation characters.
+   * @param str
+   *          The string that is to be quoted.
+   * @param quotes
+   *          The string that provides the quotation characters.
    * @return The target string surrounded by quotation characters.
    */
   public static String quote(final String str, final String quotes) {
@@ -48,7 +50,8 @@ public class StringExtensions {
   /**
    * Use {@link StringExtensions#quote} to surround a string with double quotes.
    * 
-   * @param str  The string that is to be double quoted.
+   * @param str
+   *          The string that is to be double quoted.
    * @return The double quoted string.
    */
   public static String doubleQuote(final String str) {
@@ -58,7 +61,8 @@ public class StringExtensions {
   /**
    * Use {@link StringExtensions#quote} to surround a string with single quotes.
    * 
-   * @param str  The string that is to be single quoted.
+   * @param str
+   *          The string that is to be single quoted.
    * @return The single quoted string.
    */
   public static String singleQuote(final String str) {
@@ -68,7 +72,8 @@ public class StringExtensions {
   /**
    * Use {@link StringExtensions#quote} to surround a string with parentheses.
    * 
-   * @param str  The string that is to be parenthesised.
+   * @param str
+   *          The string that is to be parenthesised.
    * @return The parenthesised string.
    */
   public static String parenthesise(final String str) {
@@ -78,7 +83,8 @@ public class StringExtensions {
   /**
    * Use {@link StringExtensions#quote} to surround a string with brackets.
    * 
-   * @param str  The string that is to be bracketed.
+   * @param str
+   *          The string that is to be bracketed.
    * @return The bracketed string.
    */
   public static String bracket(final String str) {
@@ -88,7 +94,8 @@ public class StringExtensions {
   /**
    * Use {@link StringExtensions#quote} to surround a string with braces.
    * 
-   * @param str  The string that is to be surrounded with braces.
+   * @param str
+   *          The string that is to be surrounded with braces.
    * @return The brace quoted string.
    */
   public static String brace(final String str) {
@@ -99,18 +106,19 @@ public class StringExtensions {
    * If an identifier starts with an illegal character it is prefixed with an
    * identifying string.
    * 
-   * @param s  The string representing an identifier that is to be checked.
+   * @param str
+   *          The string representing an identifier that is to be checked.
    * @return The checked string, which may have been modified.
    */
-  public static String altFieldPrefix(final String s) {
-    if (((s != null) && (!s.isEmpty()))) {
-      boolean _isLetter = Character.isLetter(s.charAt(0));
+  public static String altFieldPrefix(final String str) {
+    if (((str != null) && (!str.isEmpty()))) {
+      boolean _isLetter = Character.isLetter(str.charAt(0));
       boolean _not = (!_isLetter);
       if (_not) {
-        return (StringExtensions.ALT_FIELD_PREFIX + s);
+        return (StringExtensions.ALT_FIELD_PREFIX + str);
       }
     }
-    return s;
+    return str;
   }
   
   /**
@@ -118,8 +126,9 @@ public class StringExtensions {
    * the original and the transformed version are cached in a map so that the
    * transformation process isn't repeated unnecessarily.
    * 
-   * @param identifier  The string to the tested for legality.
-   * @return the identifier string, which may have been transformed.
+   * @param identifier
+   *          The string to the tested for legality.
+   * @return The identifier string, which may have been transformed.
    */
   public static String legal(final String identifier) {
     if (((identifier == null) || identifier.isEmpty())) {

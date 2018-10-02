@@ -40,12 +40,17 @@ public class OASTypeImpl implements OASType {
   /**
    * Protected constructor for an {@link OASTypeImpl} base object.
    *
-   * @param parent  The parent of this type.
-   * @param mappedName  The name of the node that a schema is attached to. For top level
-   *                    schemas this is the name of the type.
-   * @param schemaType  The resolved schema type name.
-   * @param schema  The {@link Schema} that will be used to build the {@link OASTypeImpl}.
-   * @param reference  A {@link Reference} associated with the schema which may be {@code null}.
+   * @param parent
+   *          The parent of this type.
+   * @param mappedName
+   *          The name of the node that a schema is attached to. For top level
+   *          schemas this is the name of the type.
+   * @param schemaType
+   *          The resolved schema type name.
+   * @param schema
+   *          The {@link Schema} that will be used to build the {@link OASTypeImpl}.
+   * @param reference
+   *          A {@link Reference} associated with the schema which may be {@code null}.
    * @return The {@link OASTypeImpl} object.
    */
   protected OASTypeImpl(final OASType parent, final String mappedName, final String schemaType, final Schema schema, final Reference reference) {

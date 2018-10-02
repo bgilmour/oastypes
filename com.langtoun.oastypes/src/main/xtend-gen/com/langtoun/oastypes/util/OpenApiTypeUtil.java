@@ -12,8 +12,8 @@ public class OpenApiTypeUtil {
    * Convert from OpenAPI's numeric types to appropriate XML schema numeric types.
    * 
    * @param openApiNumericTypeFormat
-   *          the name of a RAML numeric type
-   * @return the corresponding XML schema numeric type name
+   *          The name of a RAML numeric type.
+   * @return The corresponding XML schema numeric type name.
    */
   public static QName schemaNumericTypeName(final String openApiNumericFormat, final QName defaultType) {
     if ((openApiNumericFormat != null)) {

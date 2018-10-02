@@ -14,6 +14,10 @@ import com.langtoun.oastypes.impl.OASStringTypeImpl;
 import com.reprezen.jsonoverlay.Reference;
 import com.reprezen.kaizen.oasparser.model3.Schema;
 
+/**
+ * A factory class that creates new {@link OASType} objects from
+ * OpenAPI {@link Schema} objects.
+ */
 public class OASTypeFactory {
 
   private static Logger LOGGER = Logger.getLogger(OASTypeFactory.class);

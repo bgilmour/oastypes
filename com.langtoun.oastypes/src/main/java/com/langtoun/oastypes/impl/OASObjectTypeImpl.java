@@ -35,12 +35,17 @@ public class OASObjectTypeImpl extends OASTypeImpl implements OASObjectType {
    * Private constructor for an {@link OASObjectTypeImpl} base object. Objects must be
    * created using the builder.
    *
-   * @param parent  The parent of this type.
-   * @param mappedName  The name of the node that a schema is attached to. For top level
-   *                    schemas this is the name of the type.
-   * @param schemaType  The resolved schema type name.
-   * @param schema  The {@link Schema} that will be used to build the {@link OASObjectTypeImpl}.
-   * @param reference  A {@link Reference} associated with the schema which may be {@code null}.
+   * @param parent
+   *          The parent of this type.
+   * @param mappedName
+   *          The name of the node that a schema is attached to. For top level
+   *          schemas this is the name of the type.
+   * @param schemaType
+   *          The resolved schema type name.
+   * @param schema
+   *          The {@link Schema} that will be used to build the {@link OASObjectTypeImpl}.
+   * @param reference
+   *          A {@link Reference} associated with the schema which may be {@code null}.
    * @return The {@link OASObjectTypeImpl} object.
    */
   private OASObjectTypeImpl(final OASType parent, final String mappedName, final String schemaType, final Schema schema, final Reference reference) {
@@ -116,12 +121,17 @@ public class OASObjectTypeImpl extends OASTypeImpl implements OASObjectType {
   /**
    * Create a new builder for an {@link OASObjectTypeImpl} object.
    *
-   * @param parent  The parent of this type.
-   * @param mappedName  The name of the node that a schema is attached to. For top level
-   *                    schemas this is the name of the type.
-   * @param schemaType  The resolved schema type name.
-   * @param schema  The {@link Schema} that will be used to build the {@link OASObjectTypeImpl}.
-   * @param reference  A {@link Reference} associated with the schema which may be {@code null}.
+   * @param parent
+   *          The parent of this type.
+   * @param mappedName
+   *          The name of the node that a schema is attached to. For top level
+   *          schemas this is the name of the type.
+   * @param schemaType
+   *          The resolved schema type name.
+   * @param schema
+   *          The {@link Schema} that will be used to build the {@link OASObjectTypeImpl}.
+   * @param reference
+   *          A {@link Reference} associated with the schema which may be {@code null}.
    * @return The {@link Builder} object.
    */
   public static Builder builder(final OASType parent, final String mappedName, final String schemaType, final Schema schema, final Reference reference) {

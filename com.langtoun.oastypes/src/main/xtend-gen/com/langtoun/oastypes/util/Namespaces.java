@@ -1,5 +1,8 @@
 package com.langtoun.oastypes.util;
 
+/**
+ * Standard namespace definitions.
+ */
 @SuppressWarnings("all")
 public class Namespaces {
   public final static String WSDL_NAMESPACE = "http://schemas.xmlsoap.org/wsdl/";

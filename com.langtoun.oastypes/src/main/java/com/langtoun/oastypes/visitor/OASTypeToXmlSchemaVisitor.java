@@ -104,34 +104,6 @@ public final class OASTypeToXmlSchemaVisitor implements OASTypeDispatcher<XmlSch
   }
 
   /*
-   * ---- type visitor dispatcher ----
-   */
-
-  @Override
-  public XmlSchemaType visit(final OASType oasType, SchemaVisitorContext context) {
-    if (oasType instanceof OASObjectType) {
-      return visitObject((OASObjectType) oasType, context);
-    } else if (oasType instanceof OASArrayType) {
-      return visitArray((OASArrayType) oasType, context);
-    } else if (oasType instanceof OASStringType) {
-      return visitString((OASStringType) oasType, context);
-    } else if (oasType instanceof OASNumberType) {
-      return visitNumber((OASNumberType) oasType, context);
-    } else if (oasType instanceof OASIntegerType) {
-      return visitInteger((OASIntegerType) oasType, context);
-    } else if (oasType instanceof OASBooleanType) {
-      return visitBoolean((OASBooleanType) oasType, context);
-    } else if (oasType instanceof OASDateType) {
-      return visitDate((OASDateType) oasType, context);
-    } else if (oasType instanceof OASDateTimeType) {
-      return visitDateTime((OASDateTimeType) oasType, context);
-    } else if (oasType instanceof OASNullType) {
-      return visitNull((OASNullType) oasType, context);
-    }
-    return null;
-  }
-
-  /*
    * ---- schema methods ----
    */
 
@@ -159,7 +131,7 @@ public final class OASTypeToXmlSchemaVisitor implements OASTypeDispatcher<XmlSch
    *
    * @param targetNamespaceURI
    *          The target namespace URI.
-   * @return An {@link XmlSchema} object, or {@code null} is there is no mapping
+   * @return An {@link XmlSchema} object, or {@code null} is there is no mapping.
    */
   private XmlSchema getSchema(final String targetNamespaceURI) {
     XmlSchema xmlSchema = schemaMap.getOrDefault(targetNamespaceURI, null);
@@ -173,7 +145,7 @@ public final class OASTypeToXmlSchemaVisitor implements OASTypeDispatcher<XmlSch
    * Retrieve the {@link XmlSchema} object associated with the visitor's default
    * target namespace.
    *
-   * @return An {@link XmlSchema} object, or {@code null} is there is no mapping
+   * @return An {@link XmlSchema} object, or {@code null} is there is no mapping.
    */
   private XmlSchema getSchema() {
     return schemaMap.getOrDefault(targetNamespace, null);
@@ -186,7 +158,7 @@ public final class OASTypeToXmlSchemaVisitor implements OASTypeDispatcher<XmlSch
   /**
    * Return the target namespace associated with the model being processed.
    *
-   * @return the target namespace
+   * @return The target namespace.
    */
   public String getTargetNamespace() {
     return targetNamespace;
@@ -199,7 +171,7 @@ public final class OASTypeToXmlSchemaVisitor implements OASTypeDispatcher<XmlSch
    *          The {@link OASType} for which to calculate the target namespace.
    * @param context
    *          The visitor context.
-   * @return the target namespace URI
+   * @return The target namespace URI.
    */
   private String calculateTargetNamespaceURI(final OASType oasType, final SchemaVisitorContext context) {
     if (oasType == null) {
@@ -215,11 +187,11 @@ public final class OASTypeToXmlSchemaVisitor implements OASTypeDispatcher<XmlSch
    * initialised.
    *
    * @param targetNamespace
-   *          The namespace of the default OpenAPI or library whose types are being processed
+   *          The namespace of the default OpenAPI or library whose types are being processed.
    * @param namespaceAlias
-   *          the alias from the uses list that is used to reference a library
+   *          The alias from the uses list that is used to reference a library.
    * @param namespaceURI
-   *          the namespace URI derived from the referenced library
+   *          The namespace URI derived from the referenced library.
    */
   private void addNamespaceAliasMapping(final String targetNamespace, final String namespaceAlias, final String namespaceURI) {
     tracer.log(
@@ -371,7 +343,7 @@ public final class OASTypeToXmlSchemaVisitor implements OASTypeDispatcher<XmlSch
    * Update the type map with the {@link XmlSchemaType} corresponding to a {@link OASType}.
    *
    * @param qName
-   *          The qualified name of the type entry being updated
+   *          The qualified name of the type entry being updated.
    * @param schemaType
    *          The {@link XmlSchemaType} that will update an existing type map entry.
    * @return The updated type map entry.
@@ -397,7 +369,7 @@ public final class OASTypeToXmlSchemaVisitor implements OASTypeDispatcher<XmlSch
    *          The {@link OASType} that is to be expressed as a top level XML schema type.
    * @param context
    *          The visitor context.
-   * @return the {@link XmlSchemaType} created from the RAML type declaration.
+   * @return The {@link XmlSchemaType} created from the RAML type declaration.
    */
   public XmlSchemaType toTopLevelType(final OASType oasType, final SchemaVisitorContext context) {
     tracer.log(
@@ -416,14 +388,14 @@ public final class OASTypeToXmlSchemaVisitor implements OASTypeDispatcher<XmlSch
    * Build an XML schema element from an OpenAPI type declaration.
    *
    * @param name
-   *          the element name
+   *          The element name.
    * @param oasType
-   *          the {@link OASType} that will provide the body of the element
+   *          The {@link OASType} that will provide the body of the element.
    * @param context
-   *          the visitor context
+   *          The visitor context.
    * @param expand
-   *          if {@code true} expand the element content
-   * @return an {@link XmlSchemaElement} built from the type declaration
+   *          If {@code true} expand the element content.
+   * @return The {@link XmlSchemaElement} built from the type declaration.
    */
   public XmlSchemaElement buildElement(final String name, final OASType oasType, final SchemaVisitorContext context, final boolean expand) {
     tracer.log(
@@ -515,6 +487,34 @@ public final class OASTypeToXmlSchemaVisitor implements OASTypeDispatcher<XmlSch
 
     tracer.decreaseIndent();
     return schemaElement;
+  }
+
+  /*
+   * ---- type visitor dispatcher ----
+   */
+
+  @Override
+  public XmlSchemaType visit(final OASType oasType, SchemaVisitorContext context) {
+    if (oasType instanceof OASObjectType) {
+      return visitObject((OASObjectType) oasType, context);
+    } else if (oasType instanceof OASArrayType) {
+      return visitArray((OASArrayType) oasType, context);
+    } else if (oasType instanceof OASStringType) {
+      return visitString((OASStringType) oasType, context);
+    } else if (oasType instanceof OASNumberType) {
+      return visitNumber((OASNumberType) oasType, context);
+    } else if (oasType instanceof OASIntegerType) {
+      return visitInteger((OASIntegerType) oasType, context);
+    } else if (oasType instanceof OASBooleanType) {
+      return visitBoolean((OASBooleanType) oasType, context);
+    } else if (oasType instanceof OASDateType) {
+      return visitDate((OASDateType) oasType, context);
+    } else if (oasType instanceof OASDateTimeType) {
+      return visitDateTime((OASDateTimeType) oasType, context);
+    } else if (oasType instanceof OASNullType) {
+      return visitNull((OASNullType) oasType, context);
+    }
+    return null;
   }
 
   /*

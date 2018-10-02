@@ -10,6 +10,9 @@ import java.util.HashSet
 import java.util.List
 import java.util.Set
 
+/**
+ * Static class that implements a deep comparison of two type definitions.
+ */
 class OASTypeEquality {
 
   /*
@@ -17,10 +20,10 @@ class OASTypeEquality {
    * both objects are of the same type before proceeding to the recursive comparison.
    *
    * @param td1
-   *          the first type declaration object
+   *          The first type declaration object.
    * @param td2
-   *          the second type declaration object
-   * @result {code true} if the types are equal, otherwise {@code false}
+   *          The second type declaration object.
+   * @result {code true} if the types are equal, otherwise {@code false}.
    */
   static def boolean equals(OASType td1, OASType td2) {
     if (td1 === null && td2 === null) return true
