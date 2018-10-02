@@ -21,6 +21,7 @@ public class OASIntegerTypeImpl extends OASTypeImpl implements OASIntegerType {
   private Number maximum;
   private Boolean exclusiveMinimum;
   private Boolean exclusiveMaximum;
+  private Number multipleOf;
   private List<Number> enums;
   // members computed from the model
   private boolean isLong;
@@ -85,6 +86,11 @@ public class OASIntegerTypeImpl extends OASTypeImpl implements OASIntegerType {
   }
 
   @Override
+  public Number multipleOf() {
+    return multipleOf;
+  }
+
+  @Override
   public boolean hasEnums() {
     return hasEnums;
   }
@@ -111,6 +117,10 @@ public class OASIntegerTypeImpl extends OASTypeImpl implements OASIntegerType {
     if (exclusiveMaximum != null) {
       sb.append(",").append(doubleQuote(escapeJson("exclusiveMaximum"))).append(":")
         .append(exclusiveMaximum.toString());
+    }
+    if (multipleOf != null) {
+      sb.append(",").append(doubleQuote(escapeJson("multipleOf"))).append(":")
+        .append(isLong ? multipleOf.longValue() : multipleOf.intValue());
     }
     if (hasEnums) {
       sb.append(",").append(doubleQuote(escapeJson("enum"))).append(":")
@@ -169,6 +179,14 @@ public class OASIntegerTypeImpl extends OASTypeImpl implements OASIntegerType {
 
     public Builder exclusiveMaximum() {
       oasIntegerType.exclusiveMaximum = schema.getExclusiveMaximum();
+      return this;
+    }
+
+    public Builder multipleOf() {
+      final Number multipleOf = schema.getMultipleOf();
+      if (multipleOf != null) {
+        oasIntegerType.multipleOf = oasIntegerType.isLong ? Long.valueOf(multipleOf.longValue()) : Integer.valueOf(multipleOf.intValue());
+      }
       return this;
     }
 

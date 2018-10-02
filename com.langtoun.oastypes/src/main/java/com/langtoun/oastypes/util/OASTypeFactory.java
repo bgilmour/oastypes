@@ -90,6 +90,7 @@ public class OASTypeFactory {
             .maximum()
             .exclusiveMinimum()
             .exclusiveMaximum()
+            .multipleOf()
             .enums()
             .build();
         break;
@@ -100,6 +101,7 @@ public class OASTypeFactory {
             .maximum()
             .exclusiveMinimum()
             .exclusiveMaximum()
+            .multipleOf()
             .enums()
             .build();
         break;

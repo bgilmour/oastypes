@@ -21,6 +21,7 @@ public class OASNumberTypeImpl extends OASTypeImpl implements OASNumberType {
   private Number maximum;
   private Boolean exclusiveMinimum;
   private Boolean exclusiveMaximum;
+  private Number multipleOf;
   private List<Number> enums;
   // members computed from the model
   private boolean isDouble;
@@ -70,6 +71,11 @@ public class OASNumberTypeImpl extends OASTypeImpl implements OASNumberType {
   }
 
   @Override
+  public Number multipleOf() {
+    return multipleOf;
+  }
+
+  @Override
   public List<Number> enums() {
     return enums;
   }
@@ -111,6 +117,10 @@ public class OASNumberTypeImpl extends OASTypeImpl implements OASNumberType {
     if (exclusiveMaximum != null) {
       sb.append(",").append(doubleQuote(escapeJson("exclusiveMaximum"))).append(":")
         .append(exclusiveMaximum.toString());
+    }
+    if (multipleOf != null) {
+      sb.append(",").append(doubleQuote(escapeJson("multipleOf"))).append(":")
+        .append(isDouble ? multipleOf.doubleValue() : multipleOf.floatValue());
     }
     if (hasEnums) {
       sb.append(",").append(doubleQuote(escapeJson("enum"))).append(":")
@@ -169,6 +179,14 @@ public class OASNumberTypeImpl extends OASTypeImpl implements OASNumberType {
 
     public Builder exclusiveMaximum() {
       oasNumberType.exclusiveMaximum = schema.getExclusiveMaximum();
+      return this;
+    }
+
+    public Builder multipleOf() {
+      final Number multipleOf = schema.getMultipleOf();
+      if (multipleOf != null) {
+        oasNumberType.multipleOf = oasNumberType.isDouble ? Double.valueOf(multipleOf.doubleValue()) : Float.valueOf(multipleOf.floatValue());
+      }
       return this;
     }
 

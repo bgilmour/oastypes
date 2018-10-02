@@ -24,6 +24,7 @@ public class OASTypeImpl implements OASType {
   private final String name;
   private final String type;
   private final String format;
+  private final String title;
   private final String description;
   private final Object defaultValue;
   private final Boolean nullable;
@@ -57,6 +58,7 @@ public class OASTypeImpl implements OASType {
     this.name = schema.getName();
     this.type = schemaType;
     this.format = schema.getFormat();
+    this.title = schema.getTitle();
     this.description = schema.getDescription();
     this.defaultValue = schema.getDefault();
     this.nullable = schema.getNullable();
@@ -108,6 +110,11 @@ public class OASTypeImpl implements OASType {
   @Override
   public String format() {
     return format;
+  }
+
+  @Override
+  public String title() {
+    return title;
   }
 
   @Override
@@ -184,6 +191,10 @@ public class OASTypeImpl implements OASType {
     if (format != null) {
       sb.append(",").append(doubleQuote("format")).append(":")
         .append(doubleQuote(escapeJson(format)));
+    }
+    if (title != null) {
+      sb.append(",").append(doubleQuote("title")).append(":")
+        .append(doubleQuote(escapeJson(title)));
     }
     if (description != null) {
       sb.append(",").append(doubleQuote("description")).append(":")

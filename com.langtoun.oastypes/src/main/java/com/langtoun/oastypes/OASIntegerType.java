@@ -50,6 +50,15 @@ public interface OASIntegerType extends OASType {
   Boolean exclusiveMaximum();
 
   /**
+   * A number greater that zero that validates a numeric value only if that
+   * value can be divided by this value with an integer result.
+   *
+   * @return The value of the {@code multipleOf} node, or {@code null}
+   *         if the node was not present.
+   */
+  Number multipleOf();
+
+  /**
    * The list of allowed values for the integer type.
    *
    * @return A list of items defined by the {@code enum} node. The list is never

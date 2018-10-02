@@ -77,16 +77,23 @@ public interface OASType {
    * While relying on JSON Schema's defined formats, the OAS offers a few
    * additional predefined formats.
    *
-   * @return The value of the {@code format} node.
+   * @return The value of the {@code format} node, or {code null} if it is missing.
    *
    * @see <a href="https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.1.md#dataTypeFormat">Data Type Formats</a>
    */
   String format();
 
   /**
+   * A short description of the schema.
+   *
+   * @return The value of the {@code title} node, or {code null} if it is missing.
+   */
+  String title();
+
+  /**
    * CommonMark syntax MAY be used for rich text representation.
    *
-   * @return The value of the {@code description} node.
+   * @return The value of the {@code description} node, or {code null} if it is missing.
    *
    * @see <a href="https://spec.commonmark.org">CommonMark syntax</a>
    */
@@ -99,7 +106,7 @@ public interface OASType {
    * Object defined at the same level. For example, if {@code type} is
    * {@code string}, then {@code default} can be "foo" but cannot be 1.
    *
-   * @return The value of the {@code default} node.
+   * @return The value of the {@code default} node, or {code null} if it is missing.
    */
   Object defaultValue();
 
@@ -107,7 +114,7 @@ public interface OASType {
    * Allows sending a null value for the defined schema. Default value is
    * {@code false}.
    *
-   * @return The value of the {@code nullable} node.
+   * @return The value of the {@code nullable} node, or {code null} if it is missing.
    */
   Boolean nullable();
 
@@ -119,7 +126,7 @@ public interface OASType {
    * response only. A property MUST NOT be marked as both readOnly and writeOnly
    * being true. Default value is {@code false}.
    *
-   * @return The value of the {@code readOnly} node.
+   * @return The value of the {@code readOnly} node, or {code null} if it is missing.
    */
   Boolean readOnly();
 
@@ -131,7 +138,7 @@ public interface OASType {
    * only. A property MUST NOT be marked as both {@code readOnly} and {@code writeOnly}
    * being true. Default value is {@code false}.
    *
-   * @return The value of the {@code writeOnly} node.
+   * @return The value of the {@code writeOnly} node, or {code null} if it is missing.
    */
   Boolean writeOnly();
 
@@ -139,7 +146,7 @@ public interface OASType {
    * Specifies that a schema is deprecated and SHOULD be transitioned out of usage.
    * Default value is {@code false}.
    *
-   * @return The value of the {@code deprecated} node.
+   * @return The value of the {@code deprecated} node, or {code null} if it is missing.
    */
   Boolean deprecated();
 
