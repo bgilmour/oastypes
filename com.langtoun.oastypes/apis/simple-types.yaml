@@ -75,7 +75,7 @@ components:
         - 1400
 
     I1:
-      type: number
+      type: integer
       format: int32
       minimum: -10
       maximum: 1025
@@ -87,7 +87,7 @@ components:
         - 1400
 
     I2:
-      type: number
+      type: integer
       format: int64
       minimum: -10
       maximum: 1025

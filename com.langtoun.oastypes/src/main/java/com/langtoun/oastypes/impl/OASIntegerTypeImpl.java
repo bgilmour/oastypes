@@ -15,19 +15,9 @@ import com.reprezen.kaizen.oasparser.model3.Schema;
  * Implementation of {@link OASIntegerType} that extends the {@link OASType}
  * base class.
  */
-public class OASIntegerTypeImpl extends OASTypeImpl implements OASIntegerType {
-  // members extracted from the model
-  private Number minimum;
-  private Number maximum;
-  private Boolean exclusiveMinimum;
-  private Boolean exclusiveMaximum;
-  private Number multipleOf;
-  private List<Number> enums;
+public class OASIntegerTypeImpl extends OASNumericTypeImpl implements OASIntegerType {
   // members computed from the model
   private boolean isLong;
-  private boolean isExclusiveMinimum;
-  private boolean isExclusiveMaximum;
-  private boolean hasEnums;
 
   /**
    * Private constructor for an {@link OASIntegerTypeImpl} base object. Objects must be
@@ -49,54 +39,11 @@ public class OASIntegerTypeImpl extends OASTypeImpl implements OASIntegerType {
     super(parent, mappedName, schemaType, schema, reference);
     // members computed from the model
     this.isLong = format() == null || "int64".equals(format());
-    this.isExclusiveMinimum = schema.isExclusiveMinimum();
-    this.isExclusiveMaximum = schema.isExclusiveMaximum();
-    this.hasEnums = schema.hasEnums();
   }
 
   @Override
-  public Number minimum() {
-    return minimum;
-  }
-
-  @Override
-  public Number maximum() {
-    return maximum;
-  }
-
-  @Override
-  public Boolean exclusiveMinimum() {
-    return exclusiveMinimum;
-  }
-
-  @Override
-  public Boolean exclusiveMaximum() {
-    return exclusiveMaximum;
-  }
-
-  @Override
-  public List<Number> enums() {
-    return enums;
-  }
-
-  @Override
-  public boolean isExclusiveMinimum() {
-    return isExclusiveMinimum;
-  }
-
-  @Override
-  public boolean isExclusiveMaximum() {
-    return isExclusiveMaximum;
-  }
-
-  @Override
-  public Number multipleOf() {
-    return multipleOf;
-  }
-
-  @Override
-  public boolean hasEnums() {
-    return hasEnums;
+  public boolean isLong() {
+    return isLong;
   }
 
   @Override

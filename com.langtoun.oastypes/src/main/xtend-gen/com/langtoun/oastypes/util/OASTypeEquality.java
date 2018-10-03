@@ -237,15 +237,15 @@ public class OASTypeEquality {
   }
   
   private static boolean oasTypeEquals(final OASType td1, final OASType td2, final Set<OASType> visited) {
-    if (td1 instanceof OASArrayType
-         && td2 instanceof OASArrayType) {
-      return _oasTypeEquals((OASArrayType)td1, (OASArrayType)td2, visited);
-    } else if (td1 instanceof OASIntegerType
+    if (td1 instanceof OASIntegerType
          && td2 instanceof OASIntegerType) {
       return _oasTypeEquals((OASIntegerType)td1, (OASIntegerType)td2, visited);
     } else if (td1 instanceof OASNumberType
          && td2 instanceof OASNumberType) {
       return _oasTypeEquals((OASNumberType)td1, (OASNumberType)td2, visited);
+    } else if (td1 instanceof OASArrayType
+         && td2 instanceof OASArrayType) {
+      return _oasTypeEquals((OASArrayType)td1, (OASArrayType)td2, visited);
     } else if (td1 instanceof OASObjectType
          && td2 instanceof OASObjectType) {
       return _oasTypeEquals((OASObjectType)td1, (OASObjectType)td2, visited);
