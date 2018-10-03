@@ -100,7 +100,7 @@ components:
     A1-I1:
       type: array
       items:
-        type: number
+        type: integer
         format: int32
       minItems: 1
       maxItems: 8
@@ -108,7 +108,7 @@ components:
     A1-I2:
       type: array
       items:
-        type: number
+        type: integer
         format: int64
       minItems: 1
       maxItems: 8
@@ -116,7 +116,7 @@ components:
     A2-I1:
       type: array
       items:
-        type: number
+        type: integer
         format: int32
         minimum: -200
         maximum: 200
@@ -126,7 +126,7 @@ components:
     A2-I2:
       type: array
       items:
-        type: number
+        type: integer
         format: int64
         minimum: -2500
         maximum: 2500
