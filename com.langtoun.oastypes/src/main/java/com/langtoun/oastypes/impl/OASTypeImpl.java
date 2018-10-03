@@ -24,6 +24,7 @@ public class OASTypeImpl implements OASType {
   private final String name;
   private final String type;
   private final String format;
+  private final String title;
   private final String description;
   private final Object defaultValue;
   private final Boolean nullable;
@@ -39,13 +40,17 @@ public class OASTypeImpl implements OASType {
   /**
    * Protected constructor for an {@link OASTypeImpl} base object.
    *
-   * @param parent  The parent of this type.
-   * @param mappedName  The name of the node that a schema is attached to. For top level
-   *                    schemas this is the name of the type.
-   * @param schemaType  The resolved schema type name.
-   * @param schema  The {@link Schema} that will be used to build the {@link OASTypeImpl}.
-   * @param reference  A {@link Reference} associated with the schema which may be {@code null}.
-   * @return The {@link OASTypeImpl} object.
+   * @param parent
+   *          The parent of this type.
+   * @param mappedName
+   *          The name of the node that a schema is attached to. For top level
+   *          schemas this is the name of the type.
+   * @param schemaType
+   *          The resolved schema type name.
+   * @param schema
+   *          The {@link Schema} that will be used to build the {@link OASTypeImpl}.
+   * @param reference
+   *          A {@link Reference} associated with the schema which may be {@code null}.
    */
   protected OASTypeImpl(final OASType parent, final String mappedName, final String schemaType, final Schema schema, final Reference reference) {
     this.parent = parent;
@@ -57,6 +62,7 @@ public class OASTypeImpl implements OASType {
     this.name = schema.getName();
     this.type = schemaType;
     this.format = schema.getFormat();
+    this.title = schema.getTitle();
     this.description = schema.getDescription();
     this.defaultValue = schema.getDefault();
     this.nullable = schema.getNullable();
@@ -108,6 +114,11 @@ public class OASTypeImpl implements OASType {
   @Override
   public String format() {
     return format;
+  }
+
+  @Override
+  public String title() {
+    return title;
   }
 
   @Override
@@ -184,6 +195,10 @@ public class OASTypeImpl implements OASType {
     if (format != null) {
       sb.append(",").append(doubleQuote("format")).append(":")
         .append(doubleQuote(escapeJson(format)));
+    }
+    if (title != null) {
+      sb.append(",").append(doubleQuote("title")).append(":")
+        .append(doubleQuote(escapeJson(title)));
     }
     if (description != null) {
       sb.append(",").append(doubleQuote("description")).append(":")

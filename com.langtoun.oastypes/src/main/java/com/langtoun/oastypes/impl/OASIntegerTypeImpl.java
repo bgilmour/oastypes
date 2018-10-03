@@ -15,78 +15,35 @@ import com.reprezen.kaizen.oasparser.model3.Schema;
  * Implementation of {@link OASIntegerType} that extends the {@link OASType}
  * base class.
  */
-public class OASIntegerTypeImpl extends OASTypeImpl implements OASIntegerType {
-  // members extracted from the model
-  private Number minimum;
-  private Number maximum;
-  private Boolean exclusiveMinimum;
-  private Boolean exclusiveMaximum;
-  private List<Number> enums;
+public class OASIntegerTypeImpl extends OASNumericTypeImpl implements OASIntegerType {
   // members computed from the model
   private boolean isLong;
-  private boolean isExclusiveMinimum;
-  private boolean isExclusiveMaximum;
-  private boolean hasEnums;
 
   /**
    * Private constructor for an {@link OASIntegerTypeImpl} base object. Objects must be
    * created using the builder.
    *
-   * @param parent  The parent of this type.
-   * @param mappedName  The name of the node that a schema is attached to. For top level
-   *                    schemas this is the name of the type.
-   * @param schemaType  The resolved schema type name.
-   * @param schema  The {@link Schema} that will be used to build the {@link OASIntegerTypeImpl}.
-   * @param reference  A {@link Reference} associated with the schema which may be {@code null}.
-   * @return The {@link OASIntegerTypeImpl} object.
+   * @param parent
+   *          The parent of this type.
+   * @param mappedName
+   *          The name of the node that a schema is attached to. For top level
+   *          schemas this is the name of the type.
+   * @param schemaType
+   *          The resolved schema type name.
+   * @param schema
+   *          The {@link Schema} that will be used to build the {@link OASIntegerTypeImpl}.
+   * @param reference
+   *          A {@link Reference} associated with the schema which may be {@code null}.
    */
   private OASIntegerTypeImpl(final OASType parent, final String mappedName, final String schemaType, final Schema schema, final Reference reference) {
     super(parent, mappedName, schemaType, schema, reference);
     // members computed from the model
     this.isLong = format() == null || "int64".equals(format());
-    this.isExclusiveMinimum = schema.isExclusiveMinimum();
-    this.isExclusiveMaximum = schema.isExclusiveMaximum();
-    this.hasEnums = schema.hasEnums();
   }
 
   @Override
-  public Number minimum() {
-    return minimum;
-  }
-
-  @Override
-  public Number maximum() {
-    return maximum;
-  }
-
-  @Override
-  public Boolean exclusiveMinimum() {
-    return exclusiveMinimum;
-  }
-
-  @Override
-  public Boolean exclusiveMaximum() {
-    return exclusiveMaximum;
-  }
-
-  @Override
-  public List<Number> enums() {
-    return enums;
-  }
-
-  @Override
-  public boolean isExclusiveMinimum() {
-    return isExclusiveMinimum;
-  }
-
-  @Override
-  public boolean isExclusiveMaximum() {
-    return isExclusiveMaximum;
-  }
-
-  @Override
-  public boolean hasEnums() {
-    return hasEnums;
+  public boolean isLong() {
+    return isLong;
   }
 
   @Override
@@ -112,6 +69,10 @@ public class OASIntegerTypeImpl extends OASTypeImpl implements OASIntegerType {
       sb.append(",").append(doubleQuote(escapeJson("exclusiveMaximum"))).append(":")
         .append(exclusiveMaximum.toString());
     }
+    if (multipleOf != null) {
+      sb.append(",").append(doubleQuote(escapeJson("multipleOf"))).append(":")
+        .append(isLong ? multipleOf.longValue() : multipleOf.intValue());
+    }
     if (hasEnums) {
       sb.append(",").append(doubleQuote(escapeJson("enum"))).append(":")
         .append(enums.stream().map(Object::toString).collect(Collectors.joining(",", "[", "]")));
@@ -125,12 +86,17 @@ public class OASIntegerTypeImpl extends OASTypeImpl implements OASIntegerType {
   /**
    * Create a new builder for an {@link OASIntegerTypeImpl} object.
    *
-   * @param parent  The parent of this type.
-   * @param mappedName  The name of the node that a schema is attached to. For top level
-   *                    schemas this is the name of the type.
-   * @param schemaType  The resolved schema type name.
-   * @param schema  The {@link Schema} that will be used to build the {@link OASIntegerTypeImpl}.
-   * @param reference  A {@link Reference} associated with the schema which may be {@code null}.
+   * @param parent
+   *          The parent of this type.
+   * @param mappedName
+   *          The name of the node that a schema is attached to. For top level
+   *          schemas this is the name of the type.
+   * @param schemaType
+   *          The resolved schema type name.
+   * @param schema
+   *          The {@link Schema} that will be used to build the {@link OASIntegerTypeImpl}.
+   * @param reference
+   *          A {@link Reference} associated with the schema which may be {@code null}.
    * @return The {@link Builder} object.
    */
   public static Builder builder(final OASType parent, final String mappedName, final String schemaType, final Schema schema, final Reference reference) {
@@ -169,6 +135,14 @@ public class OASIntegerTypeImpl extends OASTypeImpl implements OASIntegerType {
 
     public Builder exclusiveMaximum() {
       oasIntegerType.exclusiveMaximum = schema.getExclusiveMaximum();
+      return this;
+    }
+
+    public Builder multipleOf() {
+      final Number multipleOf = schema.getMultipleOf();
+      if (multipleOf != null) {
+        oasIntegerType.multipleOf = oasIntegerType.isLong ? Long.valueOf(multipleOf.longValue()) : Integer.valueOf(multipleOf.intValue());
+      }
       return this;
     }
 

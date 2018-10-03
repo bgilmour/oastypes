@@ -1,0 +1,5 @@
+com.langtoun.oastypes
+com.langtoun.oastypes.impl
+com.langtoun.oastypes.util
+com.langtoun.oastypes.visitor
+org.apache.ws.commons.schema

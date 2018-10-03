@@ -11,16 +11,23 @@ import java.util.stream.Collectors;
  */
 public final class CollectorUtil {
 
+  private CollectorUtil() {}
+
   /**
    * Create a two parameter collector method that creates a new collector
    * backed by a {@link LinkedHashMap}.
    *
-   * @param <T>  The type of input elements to the reduction operation.
-   * @param <A>  The mutable accumulation type of the reduction operation
-   *             (often hidden as an implementation detail).
-   * @param <R>  The result type of the reduction operation.
-   * @param keyMapper  The function that provides the key value.
-   * @param valueMapper  The function that provides the mapped value.
+   * @param <T>
+   *          The type of input elements to the reduction operation.
+   * @param <A>
+   *          The mutable accumulation type of the reduction operation
+   *          (often hidden as an implementation detail).
+   * @param <R>
+   *          The result type of the reduction operation.
+   * @param keyMapper
+   *          The function that provides the key value.
+   * @param valueMapper
+   *          The function that provides the mapped value.
    * @return A new collector that uses a {@link LinkedHashMap}.
    */
   public static <T, A, R> Collector<T, ?, Map<A, R>> toLinkedMap(

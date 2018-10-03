@@ -443,14 +443,24 @@ public class XmlSchemaWriter {
         _builder.append("element name=\"array\" type=\"");
         String _typeReference = this.toTypeReference(array.getItemType().getQName());
         _builder.append(_typeReference, "    ");
-        _builder.append("\" maxOccurs=\"unbounded\"/>");
+        _builder.append("\"");
+        CharSequence _displayMinBounds = this.displayMinBounds(array);
+        _builder.append(_displayMinBounds, "    ");
+        CharSequence _displayMaxBounds = this.displayMaxBounds(array);
+        _builder.append(_displayMaxBounds, "    ");
+        _builder.append("/>");
         _builder.newLineIfNotEmpty();
       } else {
         _builder.append("    ");
         _builder.append("<");
         String _xsd_3 = this.xsd();
         _builder.append(_xsd_3, "    ");
-        _builder.append("element name=\"array\" maxOccurs=\"unbounded\">");
+        _builder.append("element name=\"array\"");
+        CharSequence _displayMinBounds_1 = this.displayMinBounds(array);
+        _builder.append(_displayMinBounds_1, "    ");
+        CharSequence _displayMaxBounds_1 = this.displayMaxBounds(array);
+        _builder.append(_displayMaxBounds_1, "    ");
+        _builder.append("\">");
         _builder.newLineIfNotEmpty();
         _builder.append("    ");
         _builder.append("  ");
@@ -1054,6 +1064,55 @@ public class XmlSchemaWriter {
         _builder_2.append(" ");
         _builder_2.append("maxOccurs=\"");
         long _maxOccurs_2 = particle.getMaxOccurs();
+        _builder_2.append(_maxOccurs_2, " ");
+        _builder_2.append("\"");
+        _xifexpression_1 = _builder_2;
+      }
+      _xifexpression = _xifexpression_1;
+    }
+    return _xifexpression;
+  }
+  
+  private CharSequence displayMinBounds(final XmlSchemaArrayType arrayType) {
+    CharSequence _xifexpression = null;
+    long _minOccurs = arrayType.getMinOccurs();
+    boolean _equals = (_minOccurs == 1);
+    if (_equals) {
+      StringConcatenation _builder = new StringConcatenation();
+      _xifexpression = _builder;
+    } else {
+      StringConcatenation _builder_1 = new StringConcatenation();
+      _builder_1.append(" ");
+      _builder_1.append("minOccurs=\"");
+      long _minOccurs_1 = arrayType.getMinOccurs();
+      _builder_1.append(_minOccurs_1, " ");
+      _builder_1.append("\"");
+      _xifexpression = _builder_1;
+    }
+    return _xifexpression;
+  }
+  
+  private CharSequence displayMaxBounds(final XmlSchemaArrayType arrayType) {
+    CharSequence _xifexpression = null;
+    long _maxOccurs = arrayType.getMaxOccurs();
+    boolean _equals = (_maxOccurs == 1);
+    if (_equals) {
+      StringConcatenation _builder = new StringConcatenation();
+      _xifexpression = _builder;
+    } else {
+      CharSequence _xifexpression_1 = null;
+      long _maxOccurs_1 = arrayType.getMaxOccurs();
+      boolean _equals_1 = (_maxOccurs_1 == Long.MAX_VALUE);
+      if (_equals_1) {
+        StringConcatenation _builder_1 = new StringConcatenation();
+        _builder_1.append(" ");
+        _builder_1.append("maxOccurs=\"unbounded\"");
+        _xifexpression_1 = _builder_1;
+      } else {
+        StringConcatenation _builder_2 = new StringConcatenation();
+        _builder_2.append(" ");
+        _builder_2.append("maxOccurs=\"");
+        long _maxOccurs_2 = arrayType.getMaxOccurs();
         _builder_2.append(_maxOccurs_2, " ");
         _builder_2.append("\"");
         _xifexpression_1 = _builder_2;

@@ -173,9 +173,9 @@ class XmlSchemaWriter {
       «ENDIF»
       <«xsd»sequence>
         «IF array.itemType.QName !== null»
-          <«xsd»element name="array" type="«array.itemType.QName.toTypeReference»" maxOccurs="unbounded"/>
+          <«xsd»element name="array" type="«array.itemType.QName.toTypeReference»"«array.displayMinBounds»«array.displayMaxBounds»/>
         «ELSE»
-          <«xsd»element name="array" maxOccurs="unbounded">
+          <«xsd»element name="array"«array.displayMinBounds»«array.displayMaxBounds»">
             «{ path.push(array); null }»
             «writeSchema(array.itemType)»
             «{ path.pop(); null }»
@@ -332,6 +332,22 @@ class XmlSchemaWriter {
       ''' maxOccurs="unbounded"'''
     else
       ''' maxOccurs="«particle.maxOccurs»"'''
+  }
+
+  private def displayMinBounds(XmlSchemaArrayType arrayType) {
+    if (arrayType.minOccurs == 1)
+      ''''''
+    else
+      ''' minOccurs="«arrayType.minOccurs»"'''
+  }
+
+  private def displayMaxBounds(XmlSchemaArrayType arrayType) {
+    if (arrayType.maxOccurs == 1)
+      ''''''
+    else if (arrayType.maxOccurs == Long.MAX_VALUE)
+      ''' maxOccurs="unbounded"'''
+    else
+      ''' maxOccurs="«arrayType.maxOccurs»"'''
   }
 
   private def displayDefaultValue(XmlSchemaElement element) {

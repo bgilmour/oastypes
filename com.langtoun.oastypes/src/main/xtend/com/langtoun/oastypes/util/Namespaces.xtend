@@ -1,5 +1,8 @@
 package com.langtoun.oastypes.util
 
+/**
+ * Standard namespace definitions.
+ */
 class Namespaces {
 
   public static val WSDL_NAMESPACE = "http://schemas.xmlsoap.org/wsdl/"

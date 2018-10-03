@@ -1,7 +1,9 @@
 package com.langtoun.oastypes.visitor;
 
 import static com.langtoun.oastypes.util.OpenApiTypeUtil.isComplexType;
+import static com.langtoun.oastypes.util.OpenApiTypeUtil.isIntegerType;
 import static com.langtoun.oastypes.util.OpenApiTypeUtil.isRequired;
+import static com.langtoun.oastypes.util.OpenApiTypeUtil.schemaNumericTypeName;
 import static com.langtoun.oastypes.util.OverlayUtil.getReference;
 import static com.langtoun.oastypes.util.StringExtensions.singleQuote;
 import static com.langtoun.oastypes.visitor.SchemaVisitorContext.newContext;
@@ -12,17 +14,34 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.xml.namespace.QName;
 
 import org.apache.log4j.Logger;
 import org.apache.ws.commons.schema.XmlSchema;
+import org.apache.ws.commons.schema.XmlSchemaAnnotation;
 import org.apache.ws.commons.schema.XmlSchemaArrayType;
 import org.apache.ws.commons.schema.XmlSchemaCollection;
+import org.apache.ws.commons.schema.XmlSchemaComplexType;
 import org.apache.ws.commons.schema.XmlSchemaElement;
+import org.apache.ws.commons.schema.XmlSchemaEnumerationFacet;
+import org.apache.ws.commons.schema.XmlSchemaFacet;
 import org.apache.ws.commons.schema.XmlSchemaForm;
+import org.apache.ws.commons.schema.XmlSchemaMaxExclusiveFacet;
+import org.apache.ws.commons.schema.XmlSchemaMaxInclusiveFacet;
+import org.apache.ws.commons.schema.XmlSchemaMaxLengthFacet;
+import org.apache.ws.commons.schema.XmlSchemaMinExclusiveFacet;
+import org.apache.ws.commons.schema.XmlSchemaMinInclusiveFacet;
+import org.apache.ws.commons.schema.XmlSchemaMinLengthFacet;
+import org.apache.ws.commons.schema.XmlSchemaPatternFacet;
+import org.apache.ws.commons.schema.XmlSchemaSequence;
+import org.apache.ws.commons.schema.XmlSchemaSequenceMember;
+import org.apache.ws.commons.schema.XmlSchemaSimpleType;
+import org.apache.ws.commons.schema.XmlSchemaSimpleTypeRestriction;
 import org.apache.ws.commons.schema.XmlSchemaType;
+import org.apache.ws.commons.schema.constants.Constants;
 import org.eclipse.xtext.xbase.lib.Pair;
 
 import com.langtoun.oastypes.OASArrayType;
@@ -32,6 +51,7 @@ import com.langtoun.oastypes.OASDateType;
 import com.langtoun.oastypes.OASIntegerType;
 import com.langtoun.oastypes.OASNullType;
 import com.langtoun.oastypes.OASNumberType;
+import com.langtoun.oastypes.OASNumericType;
 import com.langtoun.oastypes.OASObjectType;
 import com.langtoun.oastypes.OASStringType;
 import com.langtoun.oastypes.OASType;
@@ -104,34 +124,6 @@ public final class OASTypeToXmlSchemaVisitor implements OASTypeDispatcher<XmlSch
   }
 
   /*
-   * ---- type visitor dispatcher ----
-   */
-
-  @Override
-  public XmlSchemaType visit(final OASType oasType, SchemaVisitorContext context) {
-    if (oasType instanceof OASObjectType) {
-      return visitObject((OASObjectType) oasType, context);
-    } else if (oasType instanceof OASArrayType) {
-      return visitArray((OASArrayType) oasType, context);
-    } else if (oasType instanceof OASStringType) {
-      return visitString((OASStringType) oasType, context);
-    } else if (oasType instanceof OASNumberType) {
-      return visitNumber((OASNumberType) oasType, context);
-    } else if (oasType instanceof OASIntegerType) {
-      return visitInteger((OASIntegerType) oasType, context);
-    } else if (oasType instanceof OASBooleanType) {
-      return visitBoolean((OASBooleanType) oasType, context);
-    } else if (oasType instanceof OASDateType) {
-      return visitDate((OASDateType) oasType, context);
-    } else if (oasType instanceof OASDateTimeType) {
-      return visitDateTime((OASDateTimeType) oasType, context);
-    } else if (oasType instanceof OASNullType) {
-      return visitNull((OASNullType) oasType, context);
-    }
-    return null;
-  }
-
-  /*
    * ---- schema methods ----
    */
 
@@ -159,7 +151,7 @@ public final class OASTypeToXmlSchemaVisitor implements OASTypeDispatcher<XmlSch
    *
    * @param targetNamespaceURI
    *          The target namespace URI.
-   * @return An {@link XmlSchema} object, or {@code null} is there is no mapping
+   * @return An {@link XmlSchema} object, or {@code null} is there is no mapping.
    */
   private XmlSchema getSchema(final String targetNamespaceURI) {
     XmlSchema xmlSchema = schemaMap.getOrDefault(targetNamespaceURI, null);
@@ -173,7 +165,7 @@ public final class OASTypeToXmlSchemaVisitor implements OASTypeDispatcher<XmlSch
    * Retrieve the {@link XmlSchema} object associated with the visitor's default
    * target namespace.
    *
-   * @return An {@link XmlSchema} object, or {@code null} is there is no mapping
+   * @return An {@link XmlSchema} object, or {@code null} is there is no mapping.
    */
   private XmlSchema getSchema() {
     return schemaMap.getOrDefault(targetNamespace, null);
@@ -186,7 +178,7 @@ public final class OASTypeToXmlSchemaVisitor implements OASTypeDispatcher<XmlSch
   /**
    * Return the target namespace associated with the model being processed.
    *
-   * @return the target namespace
+   * @return The target namespace.
    */
   public String getTargetNamespace() {
     return targetNamespace;
@@ -199,7 +191,7 @@ public final class OASTypeToXmlSchemaVisitor implements OASTypeDispatcher<XmlSch
    *          The {@link OASType} for which to calculate the target namespace.
    * @param context
    *          The visitor context.
-   * @return the target namespace URI
+   * @return The target namespace URI.
    */
   private String calculateTargetNamespaceURI(final OASType oasType, final SchemaVisitorContext context) {
     if (oasType == null) {
@@ -215,11 +207,11 @@ public final class OASTypeToXmlSchemaVisitor implements OASTypeDispatcher<XmlSch
    * initialised.
    *
    * @param targetNamespace
-   *          The namespace of the default OpenAPI or library whose types are being processed
+   *          The namespace of the default OpenAPI or library whose types are being processed.
    * @param namespaceAlias
-   *          the alias from the uses list that is used to reference a library
+   *          The alias from the uses list that is used to reference a library.
    * @param namespaceURI
-   *          the namespace URI derived from the referenced library
+   *          The namespace URI derived from the referenced library.
    */
   private void addNamespaceAliasMapping(final String targetNamespace, final String namespaceAlias, final String namespaceURI) {
     tracer.log(
@@ -274,6 +266,8 @@ public final class OASTypeToXmlSchemaVisitor implements OASTypeDispatcher<XmlSch
 
       schemaMap.put(targetNamespaceURI, newSchema(targetNamespaceURI));
       visitedModelSet.add(targetNamespaceURI);
+
+      tracer.increaseIndent();
 
       final List<OASType> oasTypes = new ArrayList<>();
 
@@ -348,7 +342,7 @@ public final class OASTypeToXmlSchemaVisitor implements OASTypeDispatcher<XmlSch
 
   /**
    * Add an {@link OASType} to the type map as a guard against infinite recursion. All
-   * top level types are added to the type map before the visiting process in invoked
+   * top level types are added to the type map before the visiting process is invoked
    * to create the schema objects.
    *
    * @param qName
@@ -371,7 +365,7 @@ public final class OASTypeToXmlSchemaVisitor implements OASTypeDispatcher<XmlSch
    * Update the type map with the {@link XmlSchemaType} corresponding to a {@link OASType}.
    *
    * @param qName
-   *          The qualified name of the type entry being updated
+   *          The qualified name of the type entry being updated.
    * @param schemaType
    *          The {@link XmlSchemaType} that will update an existing type map entry.
    * @return The updated type map entry.
@@ -397,7 +391,7 @@ public final class OASTypeToXmlSchemaVisitor implements OASTypeDispatcher<XmlSch
    *          The {@link OASType} that is to be expressed as a top level XML schema type.
    * @param context
    *          The visitor context.
-   * @return the {@link XmlSchemaType} created from the RAML type declaration.
+   * @return The {@link XmlSchemaType} created from the RAML type declaration.
    */
   public XmlSchemaType toTopLevelType(final OASType oasType, final SchemaVisitorContext context) {
     tracer.log(
@@ -405,6 +399,8 @@ public final class OASTypeToXmlSchemaVisitor implements OASTypeDispatcher<XmlSch
       + ", tns=" + getTargetNamespace() + ")"
     );
     tracer.increaseIndent();
+    tracer.log("-- schema : " + oasType.schema());
+    tracer.log("-- oasType: " + oasType);
     context.pushTopLevel(true);
     final XmlSchemaType schemaType = visit(oasType, context);
     context.popTopLevel();
@@ -416,14 +412,14 @@ public final class OASTypeToXmlSchemaVisitor implements OASTypeDispatcher<XmlSch
    * Build an XML schema element from an OpenAPI type declaration.
    *
    * @param name
-   *          the element name
+   *          The element name.
    * @param oasType
-   *          the {@link OASType} that will provide the body of the element
+   *          The {@link OASType} that will provide the body of the element.
    * @param context
-   *          the visitor context
+   *          The visitor context.
    * @param expand
-   *          if {@code true} expand the element content
-   * @return an {@link XmlSchemaElement} built from the type declaration
+   *          If {@code true} expand the element content.
+   * @return The {@link XmlSchemaElement} built from the type declaration.
    */
   public XmlSchemaElement buildElement(final String name, final OASType oasType, final SchemaVisitorContext context, final boolean expand) {
     tracer.log(
@@ -445,14 +441,7 @@ public final class OASTypeToXmlSchemaVisitor implements OASTypeDispatcher<XmlSch
 //    schemaElement.setAnnotation(createGenericAnnotationType(schemaElement.getAnnotation(), oasType));
 
     String typeName = oasType.type();
-    final boolean isArrayNotation = typeName.endsWith("[]");
-    Pair<OASType, XmlSchemaType> typeMapEntry = lookupTypeByName(
-      createQName(
-        namespaceURI,
-        isArrayNotation ? typeName.substring(0, typeName.length() - 2)
-                        : typeName
-      )
-    );
+    Pair<OASType, XmlSchemaType> typeMapEntry = lookupTypeByName(createQName(namespaceURI, typeName));
     XmlSchemaType referencedType = typeMapEntry.getValue();
 
     final boolean isComplex = isComplexType(oasType);
@@ -464,8 +453,7 @@ public final class OASTypeToXmlSchemaVisitor implements OASTypeDispatcher<XmlSch
       checkEquality = true;
     }
     if (checkEquality) {
-      final OASType typeToCheck = isArrayNotation ? ((OASArrayType) oasType).items() : oasType;
-      if (!OASTypeEquality.equals(typeToCheck, typeMapEntry.getKey())) {
+      if (!OASTypeEquality.equals(oasType, typeMapEntry.getKey())) {
         tracer.log("-- el: type equality check failed - visitor required");
         referencedType = null;
       } else {
@@ -495,9 +483,6 @@ public final class OASTypeToXmlSchemaVisitor implements OASTypeDispatcher<XmlSch
         LOGGER.error(String.format("Unable to create an XML schema type for %s", singleQuote(oasType.name())));
       }
     } else {
-      if (isArrayNotation) {
-        schemaElement.setMaxOccurs(UNBOUNDED);
-      }
       schemaElement.setSchemaType(referencedType);
       schemaElement.setSchemaTypeName(referencedType.getQName());
       if (referencedType.getQName() == null) {
@@ -507,122 +492,736 @@ public final class OASTypeToXmlSchemaVisitor implements OASTypeDispatcher<XmlSch
       }
     }
 
-    if (!isRequired(oasType) || isArrayNotation) {
-      schemaElement.setMinOccurs(0);
+    long minOccurs = 1;
+    if (oasType instanceof OASArrayType && ((OASArrayType) oasType).minItems() != null) {
+        minOccurs = ((OASArrayType) oasType).minItems();
+    } else if (!isRequired(oasType)) {
+      minOccurs = 0;
     }
+    schemaElement.setMinOccurs(minOccurs);
 
-    schemaElement.setDefaultValue(oasType.defaultValue().toString());
+    if (oasType.defaultValue() != null) {
+      schemaElement.setDefaultValue(oasType.defaultValue().toString());
+    }
 
     tracer.decreaseIndent();
     return schemaElement;
   }
 
   /*
-   * ---- complex type support methods ----
+   * ---- type visitor dispatcher ----
    */
 
   @Override
-  public XmlSchemaType visitObject(final OASObjectType objectType, final SchemaVisitorContext context) {
-    tracer.log(
-      "<> visitObject(td=" + objectType.name() + ":" + objectType.type() + ")"
-    );
-    tracer.increaseIndent();
-
-    tracer.decreaseIndent();
+  public XmlSchemaType visit(final OASType oasType, SchemaVisitorContext context) {
+    if (oasType instanceof OASObjectType) {
+      return visitObject((OASObjectType) oasType, context);
+    } else if (oasType instanceof OASArrayType) {
+      return visitArray((OASArrayType) oasType, context);
+    } else if (oasType instanceof OASStringType) {
+      return visitString((OASStringType) oasType, context);
+    } else if (oasType instanceof OASNumberType) {
+      return visitNumber((OASNumberType) oasType, context);
+    } else if (oasType instanceof OASIntegerType) {
+      return visitInteger((OASIntegerType) oasType, context);
+    } else if (oasType instanceof OASBooleanType) {
+      return visitBoolean((OASBooleanType) oasType, context);
+    } else if (oasType instanceof OASDateType) {
+      return visitDate((OASDateType) oasType, context);
+    } else if (oasType instanceof OASDateTimeType) {
+      return visitDateTime((OASDateTimeType) oasType, context);
+    } else if (oasType instanceof OASNullType) {
+      return visitNull((OASNullType) oasType, context);
+    }
     return null;
+  }
+
+  /*
+   * ---- complex type support methods ----
+   */
+
+  /**
+   * Calculate the type name for a complex type definition.
+   *
+   * @param oasType
+   *          The type definition.
+   * @return A {@code String} containing the calculated name.
+   */
+  private String complexOASTypeName(final OASType oasType) {
+    String typeName = oasType.name();
+    if (typeName == null || typeName.contains("/") || "object".equals(typeName)) {
+      typeName = oasType.type();
+    }
+    return typeName;
+  }
+
+  /**
+   * Using an enclosing namespace, a type name, and a type declaration, attempt to lookup an existing
+   * type map entry that may or may not contain a constructed XML schema type object. If a type entry
+   * is found then the specified type declaration is compared with the type declaration in the type map
+   * entry to determine whether the type is a reference to a top level type or is a subclass that
+   * extends a top level type. For type references, the XML schema type is returned from the type map
+   * entry. For a subclass, the method creates a new {@link XmlSchemaComplexType} object. If there is no
+   * type map entry then the type is not found and {@code null} is returned.
+   *
+   * @param namespaceURI
+   *          The enclosing namespace for the complex type.
+   * @param typeName
+   *          The type name.
+   * @param oasType
+   *          The type declaration.
+   * @param context
+   *          The visitor context.
+   * @return Pair.of({@link XmlSchemaComplexType}, {@link Boolean}), or Pair.of(null, false) if type is
+   *         anonymous or type declarations are not equal.
+   */
+  private Pair<XmlSchemaComplexType, Boolean> prepareComplexType(final String namespaceURI, final String typeName, final OASType oasType, final SchemaVisitorContext context) {
+    if (typeName != null) {
+      final QName qName = createQName(namespaceURI, context.isTopLevel() ? typeName : oasType.type());
+      Pair<OASType, XmlSchemaType> typeMapEntry = lookupTypeByName(qName);
+      final XmlSchemaType schemaType = typeMapEntry.getValue();
+      if (schemaType != null && OASTypeEquality.equals(oasType, typeMapEntry.getKey())) {
+        tracer.log("-- prepare: existing complex type, type equality check passed: " + schemaType);
+        if (schemaType instanceof XmlSchemaComplexType) {
+          return Pair.of((XmlSchemaComplexType) schemaType, true);
+        } else {
+          LOGGER.error(String.format("Type %s is not appropriate for %s", schemaType.getClass().getName(), singleQuote(qName.toString())));
+        }
+      } else if (schemaType == null && OASTypeEquality.equals(oasType, typeMapEntry.getKey())) {
+        final XmlSchemaComplexType complexType = new XmlSchemaComplexType(getSchema(namespaceURI), true);
+        tracer.log("-- prepare: new complex type, type equality check passed: " + complexType);
+        return Pair.of(complexType, false);
+      }
+      tracer.log("-- prepare: type equality check failed - visitor required");
+    }
+    tracer.log("-- prepare: undefined complex type");
+    return Pair.of(null, false);
+  }
+
+  /**
+   * Process any RAML name or generic annotations that have been added to a top level complex type.
+   *
+   * @param typeName
+   *          the type name
+   * @param oasType
+   *          the type declaration
+   * @param context
+   *          the visitor context
+   * @return an {@link XmlSchemaAnnotation} object containing the processed RAML annotations, or
+   *         {@code null} if none are specified for the type declaration
+   */
+  private XmlSchemaAnnotation prepareComplexTypeAnnotation(final String typeName, final OASType oasType, final SchemaVisitorContext context) {
+    XmlSchemaAnnotation xmlSchemaAnnotation = null;
+    if (context.isTopLevel() && !"object".equals(oasType.name())) {
+//      xmlSchemaAnnotation = createRamlNameAnnotation(xmlSchemaAnnotation, typeName, legal(altFieldPrefix(typeName)));
+//      xmlSchemaAnnotation = createAuditMappingAnnotation(xmlSchemaAnnotation, oasType);
+//      xmlSchemaAnnotation = createGenericAnnotationType(xmlSchemaAnnotation, oasType);
+    }
+    return xmlSchemaAnnotation;
+  }
+
+  /*
+   * ---- complex type visitor methods ----
+   */
+
+  @Override
+  public XmlSchemaType visitObject(final OASObjectType oasObjectType, final SchemaVisitorContext context) {
+    tracer.log(
+        "<> visitObject(td=" + oasObjectType.name() + ":" + oasObjectType.type() + ")"
+      );
+      tracer.increaseIndent();
+
+      final String namespaceURI = calculateTargetNamespaceURI(oasObjectType, context);
+      final String typeName = complexOASTypeName(oasObjectType);
+
+      final Pair<XmlSchemaComplexType, Boolean> complexTypeContext = prepareComplexType(namespaceURI, typeName, oasObjectType, context);
+
+      XmlSchemaComplexType complexType = complexTypeContext.getKey();
+      final boolean isTypeReference = complexTypeContext.getValue();
+
+      final XmlSchemaAnnotation xmlSchemaAnnotation = prepareComplexTypeAnnotation(typeName, oasObjectType, context);
+
+      if (complexType != null && isTypeReference && xmlSchemaAnnotation == null) {
+        tracer.decreaseIndent();
+        return complexType;
+      }
+
+      if (complexType == null) {
+        complexType = new XmlSchemaComplexType(getSchema(context.getTargetNamespace()), context.isTopLevel());
+        tracer.log("-- new complex type created: " + complexType);
+      }
+
+      if (context.isTopLevel() && complexType.isTopLevel()) {
+        complexType.setName(typeName);
+      } else if (complexType.isTopLevel()) {
+        complexType.setName(oasObjectType.type());
+      }
+
+      if (complexType.isTopLevel()) {
+        complexType.setAnnotation(xmlSchemaAnnotation);
+      }
+
+      if (context.isTopLevel() && complexType.isTopLevel()) {
+        updateVisitedType(createQName(context.getTargetNamespace(), typeName), complexType);
+      } else if (complexType.isTopLevel()) {
+        updateVisitedType(createQName(namespaceURI, oasObjectType.type()), complexType);
+      }
+
+      final XmlSchemaSequence xmlSchemaSequence = new XmlSchemaSequence();
+      final List<XmlSchemaSequenceMember> items = xmlSchemaSequence.getItems();
+
+      for (Entry<String, OASType> propertyEntry : oasObjectType.properties().entrySet()) {
+//        XMLFacetInfo facetInfo = property.xml();
+//        String name = facetInfo != null ? defaultTo(facetInfo.name(), property.name()) : property.name();
+        final String propertyName = propertyEntry.getKey();
+        final OASType propertyType = propertyEntry.getValue();
+        context.pushTopLevel(false);
+        final XmlSchemaElement schemaElement = buildElement(propertyName, propertyType, context, false);
+        context.popTopLevel();
+        if (!oasObjectType.isRequired(propertyName)) {
+          schemaElement.setMinOccurs(0);
+        }
+        items.add(schemaElement);
+      }
+
+//      if (asBoolean(oasObjectType.additionalProperties(), true)) {
+//        final XmlSchemaAny schemaAny = new XmlSchemaAny();
+//        schemaAny.setMinOccurs(0);
+//        schemaAny.setMaxOccurs(UNBOUNDED);
+//        schemaAny.setProcessContent(XmlSchemaContentProcessing.SKIP);
+//        items.add(schemaAny);
+//      }
+
+      complexType.setParticle(xmlSchemaSequence);
+
+      tracer.decreaseIndent();
+      return complexType;
   }
 
   /*
    * ---- array type support methods ----
    */
 
+  /**
+   * Calculate the type name for a array type definition.
+   *
+   * @param oasType
+   *          the type definition
+   * @return a {@code String} containing the calculated name
+   */
+  private String arrayOASTypeName(final OASType oasType) {
+    String typeName = oasType.name();
+    if (typeName == null || typeName.contains("/") || "object".equals(typeName)) {
+      typeName = oasType.type();
+    }
+    return typeName;
+  }
+
+  /**
+   * Using an enclosing namespace, a type name, and a type declaration, attempt to lookup an existing
+   * type map entry that may or may not contain a constructed XML schema type object. If a type entry
+   * is found then the specified type declaration is compared with the type declaration in the type map
+   * entry to determine whether the type is a reference to a top level type or is a subclass that
+   * extends a top level type. For type references, the XML schema type is returned from the type map
+   * entry. For a subclass, the method creates a new {@link XmlSchemaArrayType} object. If there is no
+   * type map entry then the type is anonymous and {@code null} is returned.
+   *
+   * @param namespaceURI
+   *          the enclosing namespace for the array type
+   * @param typeName
+   *          the type name
+   * @param oasType
+   *          the type definition
+   * @param context
+   *          the visitor context
+   * @return Pair.of({@link XmlSchemaArrayType}, {@link Boolean}), or Pair.of(null, false) if type is
+   *         not found or type declarations are not equal
+   */
+  private Pair<XmlSchemaArrayType, Boolean> prepareArrayType(final String namespaceURI, final String typeName, final OASType oasType, final SchemaVisitorContext context) {
+    if (typeName != null) {
+      final QName qName = createQName(namespaceURI, context.isTopLevel() ? typeName : oasType.type());
+      Pair<OASType, XmlSchemaType> typeMapEntry = lookupTypeByName(qName);
+      final XmlSchemaType schemaType = typeMapEntry.getValue();
+      if (schemaType != null && OASTypeEquality.equals(oasType, typeMapEntry.getKey())) {
+        tracer.log("-- prepare: existing array type, type equality check passed: " + schemaType); //$NON-NLS-1$
+        if (schemaType instanceof XmlSchemaArrayType) {
+          return Pair.of((XmlSchemaArrayType) schemaType, true);
+        } else {
+          LOGGER.error(String.format("Type %s is not appropriate for %s", schemaType.getClass().getName(), singleQuote(qName.toString())));
+        }
+      } else if (schemaType == null && OASTypeEquality.equals(oasType, typeMapEntry.getKey())) {
+        final XmlSchemaArrayType complexType = new XmlSchemaArrayType(getSchema(namespaceURI), true);
+        tracer.log("-- prepare: new array type, type equality check passed: " + complexType);
+        return Pair.of(complexType, false);
+      }
+      tracer.log("-- prepare: type equality check failed - visitor required");
+    }
+    tracer.log("-- prepare: undefined array type");
+    return Pair.of(null, false);
+  }
+
+  /**
+   * Process any OpenAPI name or generic annotations that have been added to a top level array type.
+   *
+   * @param oasType
+   *          the type declaration
+   * @param context
+   *          the visitor context
+   * @return an {@link XmlSchemaAnnotation} object containing the processed OpenAPI annotations, or
+   *         {@code null} if none are specified for the type declaration
+   */
+  private XmlSchemaAnnotation prepareArrayTypeAnnotation(final OASType oasType, final SchemaVisitorContext context) {
+    XmlSchemaAnnotation xmlSchemaAnnotation = null;
+    if (context.isTopLevel() && !"object".equals(oasType.name())) { //$NON-NLS-1$
+//      xmlSchemaAnnotation = createAuditMappingAnnotation(xmlSchemaAnnotation, oasType);
+//      xmlSchemaAnnotation = createGenericAnnotationType(xmlSchemaAnnotation, oasType);
+    }
+    return xmlSchemaAnnotation;
+  }
+
+  /*
+   * ---- array type visitor methods ----
+   */
+
+  /**
+   * {@inheritDoc}
+   */
   @Override
-  public XmlSchemaType visitArray(final OASArrayType arrayType, final SchemaVisitorContext context) {
-    final OASType itemType = arrayType.items();
+  public XmlSchemaType visitArray(final OASArrayType oasArrayType, final SchemaVisitorContext context) {
+    final OASType itemType = oasArrayType.items();
     tracer.log(
-      "<> visitArray(td=" + arrayType.name() + ":" + arrayType.type()
+      "<> visitArray(td=" + oasArrayType.name() + ":" + oasArrayType.type()
       + " [items=" + itemType.name() + ":" + itemType.type() + "])"
     );
     tracer.increaseIndent();
 
+    final String namespaceURI = calculateTargetNamespaceURI(oasArrayType, context);
+    final String typeName = arrayOASTypeName(oasArrayType);
+
+    final Pair<XmlSchemaArrayType, Boolean> arrayTypeContext = prepareArrayType(namespaceURI, typeName, oasArrayType, context);
+
+    XmlSchemaArrayType arrayType = arrayTypeContext.getKey();
+    final boolean isTypeReference = arrayTypeContext.getValue();
+
+    final XmlSchemaAnnotation xmlSchemaAnnotation = prepareArrayTypeAnnotation(oasArrayType, context);
+
+    if (arrayType != null && isTypeReference && xmlSchemaAnnotation == null) {
+      tracer.decreaseIndent();
+      return arrayType;
+    }
+
+    if (arrayType == null) {
+      arrayType = new XmlSchemaArrayType(getSchema(context.getTargetNamespace()), context.isTopLevel());
+      tracer.log("-- new array type created: " + arrayType); //$NON-NLS-1$
+    }
+
+    if (context.isTopLevel() && arrayType.isTopLevel()) {
+      arrayType.setName(typeName);
+    } else if (arrayType.isTopLevel()) {
+      arrayType.setName(oasArrayType.type());
+    }
+
+    if (arrayType.isTopLevel()) {
+//      arrayType.setAnnotation(createGenericAnnotationType(arrayType.getAnnotation(), oasArrayType));
+    }
+
+    if (context.isTopLevel() && arrayType.isTopLevel()) {
+      updateVisitedType(createQName(context.getTargetNamespace(), typeName), arrayType);
+    } else if (arrayType.isTopLevel()) {
+      updateVisitedType(createQName(namespaceURI, oasArrayType.type()), arrayType);
+    }
+
+    if (oasArrayType.minItems() != null) {
+      arrayType.setMinOccurs(oasArrayType.minItems());
+    } else {
+      arrayType.setMinOccurs(0);
+    }
+
+    if (oasArrayType.maxItems() != null) {
+      arrayType.setMaxOccurs(oasArrayType.maxItems());
+    } else {
+      arrayType.setMaxOccurs(UNBOUNDED);
+    }
+
+    context.pushTopLevel(!"array".equals(oasArrayType.type()) && !"object".equals(itemType.name()) && itemType.type() != null);
+    arrayType.setItemType(visit(itemType, context));
+    context.popTopLevel();
+
     tracer.decreaseIndent();
-    return null;
+    return arrayType;
   }
 
   /*
    * ---- simple type support methods ----
    */
 
-  @Override
-  public XmlSchemaType visitString(final OASStringType stringType, final SchemaVisitorContext context) {
-    tracer.log(
-      "<> visitString(td=" + stringType.name() + ":" + stringType.type() + ")"
-    );
-    tracer.increaseIndent();
+  /**
+   * Calculate the type name for a simple type definition.
+   *
+   * @param oasType
+   *          The type definition.
+   * @param context
+   *          The visitor context.
+   * @return A {@code String} containing the calculated name.
+   */
+  private String simpleOASTypeName(final OASType oasType, final SchemaVisitorContext context) {
+    return (context.isTopLevel() || oasType.type() == null) ? oasType.name() : oasType.type();
+  }
 
-    tracer.decreaseIndent();
+  /**
+   * Using an enclosing namespace, a type name, and a type definition, attempt to lookup an existing
+   * type map entry that may or may not contain a constructed XML schema type object.
+   *
+   * @param namespaceURI
+   *          The enclosing namespace for the type.
+   * @param typeName
+   *          The type name.
+   * @param oasType
+   *          The type declaration.
+   * @param context
+   *          The visitor context.
+   * @return Pair.of({@link XmlSchemaType}, {@link Boolean}), or Pair.of(null, false) if type is
+   *         anonymous or type definitions are not equal
+   */
+  private XmlSchemaType prepareSimpleType(final String namespaceURI, final String typeName, final OASType oasType, final SchemaVisitorContext context) {
+    if (typeName != null) {
+      Pair<OASType, XmlSchemaType> typeMapEntry = lookupTypeByName(createQName(namespaceURI, context.isTopLevel() ? oasType.type() : typeName));
+      final XmlSchemaType schemaType = typeMapEntry.getValue();
+      if (schemaType != null && OASTypeEquality.equals(oasType, typeMapEntry.getKey())) {
+        return schemaType;
+      }
+    }
     return null;
   }
 
-  @Override
-  public XmlSchemaType visitNumber(final OASNumberType numberType, final SchemaVisitorContext context) {
-    tracer.log(
-      "<> visitNumber(td=" + numberType.name() + ":" + numberType.type() + ")"
-    );
+  /**
+   * Process any OpenAPI name, CLOB type, or generic annotations that have been added to a top level type.
+   *
+   * @param typeName
+   *          The type name.
+   * @param oasType
+   *          The type definition.
+   * @param context
+   *          The visitor context.
+   * @return An {@link XmlSchemaAnnotation} object containing the processed OpenAPI annotations, or
+   *         {@code null} if none are specified for the type definition.
+   */
+  private XmlSchemaAnnotation prepareSimpleTypeAnnotation(final String typeName, final OASType oasType, final SchemaVisitorContext context) {
+    XmlSchemaAnnotation xmlSchemaAnnotation = null;
+    if (context.isTopLevel()) {
+//      xmlSchemaAnnotation = createOpenApiNameAnnotation(xmlSchemaAnnotation, typeName, legal(altFieldPrefix(typeName)));
+//      xmlSchemaAnnotation = createAuditMappingAnnotation(xmlSchemaAnnotation, oasType);
+//      xmlSchemaAnnotation = createClobTypeAnnotation(xmlSchemaAnnotation, oasType);
+//      xmlSchemaAnnotation = createGenericAnnotationType(xmlSchemaAnnotation, oasType);
+    }
+    return xmlSchemaAnnotation;
+  }
+
+  /**
+   * Prepare the type restriction that is to be added as simple type content.
+   *
+   * @param schemaType
+   *          the simple type object
+   * @param qName
+   *          the qualified name of the restriction base
+   * @param context
+   *          the visitor context
+   * @return
+   */
+  private XmlSchemaSimpleTypeRestriction prepareSimpleTypeRestriction(final XmlSchemaType schemaType, final QName qName, final SchemaVisitorContext context) {
+    final XmlSchemaSimpleTypeRestriction content = new XmlSchemaSimpleTypeRestriction();
+    if (context.isTopLevel() && schemaType != null) {
+      content.setBaseType((XmlSchemaSimpleType) schemaType);
+    } else {
+      content.setBaseTypeName(qName);
+    }
+    return content;
+  }
+
+  private CompiledSimpleTypeInfo commonSimpleTypePreamble(final OASType oasType, final SchemaVisitorContext context, final String message) {
+    tracer.log(message);
     tracer.increaseIndent();
 
-    tracer.decreaseIndent();
-    return null;
+    final String namespaceURI = calculateTargetNamespaceURI(oasType, context);
+    final String typeName = simpleOASTypeName(oasType, context);
+
+    return
+      new CompiledSimpleTypeInfo.Builder(namespaceURI, typeName)
+            .setSchemaType(prepareSimpleType(namespaceURI, typeName, oasType, context))
+            .setAnnotation(prepareSimpleTypeAnnotation(typeName, oasType, context))
+            .build();
+  }
+
+  /*
+   * ---- simple type visitor methods ----
+   */
+
+  @Override
+  public XmlSchemaType visitString(final OASStringType oasStringType, final SchemaVisitorContext context) {
+    CompiledSimpleTypeInfo typeInfo = commonSimpleTypePreamble(
+      oasStringType, context,
+      "<> visitString(td=" + oasStringType.name() + ":" + oasStringType.type() + ")"
+    );
+
+    if (!context.isTopLevel() && typeInfo.getSchemaType() != null && typeInfo.getAnnotation() == null) {
+      tracer.decreaseIndent();
+      return typeInfo.getSchemaType();
+    }
+
+    final XmlSchemaSimpleTypeRestriction content = prepareSimpleTypeRestriction(typeInfo.getSchemaType(), Constants.XSD_STRING, context);
+
+    final Integer minLengthFacet = oasStringType.minLength(); /* resolveStringMinLengthFacet(stringType); */
+    if (minLengthFacet != null) {
+      final XmlSchemaMinLengthFacet minLength = new XmlSchemaMinLengthFacet();
+      minLength.setValue(minLengthFacet);
+      content.getFacets().add(minLength);
+    }
+
+    final Integer maxLengthFacet = oasStringType.maxLength(); /* resolveStringMaxLengthFacet(stringType); */
+    if (maxLengthFacet != null) {
+      final XmlSchemaMaxLengthFacet maxLength = new XmlSchemaMaxLengthFacet();
+      maxLength.setValue(maxLengthFacet);
+      content.getFacets().add(maxLength);
+    }
+
+    final String patternFacet = oasStringType.pattern(); /* resolveStringPatternFacet(stringType); */
+    if (patternFacet != null) {
+      final XmlSchemaPatternFacet pattern = new XmlSchemaPatternFacet();
+      pattern.setValue(patternFacet);
+      content.getFacets().add(pattern);
+    }
+
+    final List<String> enums = oasStringType.enums(); /* resolveStringEnumFacet(oasStringType); */
+    if (!enums.isEmpty()) {
+      for (String anEnum : enums) {
+        final XmlSchemaEnumerationFacet enumValue = new XmlSchemaEnumerationFacet();
+        enumValue.setValue(anEnum);
+        content.getFacets().add(enumValue);
+      }
+    }
+
+    if (!context.isTopLevel() && typeInfo.getSchemaType() == null && typeInfo.getAnnotation() == null && content.getFacets().isEmpty()) {
+      tracer.decreaseIndent();
+      return collection.getTypeByQName(Constants.XSD_STRING);
+    } else {
+      final XmlSchemaSimpleType simpleType = new XmlSchemaSimpleType(getSchema(typeInfo.getNamespaceURI()), false);
+      simpleType.setContent(content);
+      if (context.isTopLevel()) {
+        simpleType.setName(typeInfo.getTypeName());
+        simpleType.setAnnotation(typeInfo.getAnnotation());
+        updateVisitedType(createQName(typeInfo.getNamespaceURI(), typeInfo.getTypeName()), simpleType);
+      }
+      tracer.decreaseIndent();
+      return simpleType;
+    }
+  }
+
+  /**
+   * Create a number schema type.
+   *
+   * @param <T>
+   *          The numeric type being processed.
+   * @param oasNumericType
+   *          An numeric type from the OpenAPI definition.
+   * @param baseTypeName
+   *          The base type name that will be used to construct a name for this type.
+   * @param topLevel
+   *          If {@code true} create it as a top level type definition.
+   * @return An {@link XmlSchemaType} built from the number schema type.
+   */
+  private XmlSchemaType createNumericSchemaType(final OASNumericType oasNumericType, final QName baseTypeName, final SchemaVisitorContext context) {
+    CompiledSimpleTypeInfo typeInfo = commonSimpleTypePreamble(
+      oasNumericType, context,
+      "<> createNumericSchemaType(td=" + oasNumericType.name() + ":" + oasNumericType.type()
+      + " base=" + baseTypeName + ")"
+    );
+
+    if (!context.isTopLevel() && typeInfo.getSchemaType() != null && typeInfo.getAnnotation() == null) {
+      tracer.decreaseIndent();
+      return typeInfo.getSchemaType();
+    }
+
+    final QName resolvedTypeQName = schemaNumericTypeName(oasNumericType.format(), baseTypeName);
+
+    final XmlSchemaSimpleTypeRestriction content = prepareSimpleTypeRestriction(typeInfo.getSchemaType(), resolvedTypeQName, context);
+
+    final Number minimum = oasNumericType.minimum(); /* resolveNumberMinimumFacet(oasNumericType); */
+    if (minimum != null) {
+      final XmlSchemaFacet minimumFacet = oasNumericType.isExclusiveMinimum() ? new XmlSchemaMinExclusiveFacet()
+                                                                              : new XmlSchemaMinInclusiveFacet();
+      if (isIntegerType(oasNumericType.format())) {
+        minimumFacet.setValue(((OASIntegerType) oasNumericType).isLong() ? minimum.longValue() : minimum.intValue());
+      } else {
+        minimumFacet.setValue(((OASNumberType) oasNumericType).isDouble() ? minimum.doubleValue() : minimum.floatValue());
+      }
+      content.getFacets().add(minimumFacet);
+    }
+
+    final Number maximum = oasNumericType.maximum(); /* resolveNumberMaximumFacet(oasNumericType); */
+    if (maximum != null) {
+      final XmlSchemaFacet maximumFacet = oasNumericType.isExclusiveMaximum() ? new XmlSchemaMaxExclusiveFacet()
+                                                                              : new XmlSchemaMaxInclusiveFacet();
+      if (isIntegerType(oasNumericType.format())) {
+        maximumFacet.setValue(((OASIntegerType) oasNumericType).isLong() ? Long.valueOf(maximum.longValue()) : Integer.valueOf(maximum.intValue()));
+      } else {
+        maximumFacet.setValue(((OASNumberType) oasNumericType).isDouble() ? Double.valueOf(maximum.doubleValue()) : Float.valueOf(maximum.floatValue()));
+      }
+      content.getFacets().add(maximumFacet);
+    }
+
+    final List<Number> enums = oasNumericType.enums(); /* resolveNumberEnumFacet(oasNumericType); */
+    if (!enums.isEmpty()) {
+      for (Number anEnum : enums) {
+        final XmlSchemaFacet enumValue = new XmlSchemaEnumerationFacet();
+        enumValue.setValue(anEnum);
+        content.getFacets().add(enumValue);
+      }
+    }
+
+    if (!context.isTopLevel() && typeInfo.getSchemaType() == null && typeInfo.getAnnotation() == null && content.getFacets().isEmpty()) {
+      tracer.decreaseIndent();
+      return collection.getTypeByQName(resolvedTypeQName);
+    } else {
+      final XmlSchemaSimpleType simpleType = new XmlSchemaSimpleType(getSchema(typeInfo.getNamespaceURI()), false);
+      simpleType.setContent(content);
+      if (context.isTopLevel()) {
+        simpleType.setName(oasNumericType.name());
+        simpleType.setAnnotation(typeInfo.getAnnotation());
+        updateVisitedType(createQName(typeInfo.getNamespaceURI(), typeInfo.getTypeName()), simpleType);
+      }
+      tracer.decreaseIndent();
+      return simpleType;
+    }
   }
 
   @Override
-  public XmlSchemaType visitInteger(final OASIntegerType integerType, final SchemaVisitorContext context) {
-    tracer.log(
-      "<> visitInteger(td=" + integerType.name() + ":" + integerType.type() + ")"
-    );
-    tracer.increaseIndent();
-
-    tracer.decreaseIndent();
-    return null;
+  public XmlSchemaType visitNumber(final OASNumberType oasNumberType, final SchemaVisitorContext context) {
+    return createNumericSchemaType(oasNumberType, Constants.XSD_DOUBLE, context);
   }
 
   @Override
-  public XmlSchemaType visitBoolean(final OASBooleanType booleanType, final SchemaVisitorContext context) {
-    tracer.log(
-      "<> visitBoolean(td=" + booleanType.name() + ":" + booleanType.type() + ")"
-    );
-    tracer.increaseIndent();
-
-    tracer.decreaseIndent();
-    return null;
+  public XmlSchemaType visitInteger(final OASIntegerType oasIntegerType, final SchemaVisitorContext context) {
+    return createNumericSchemaType(oasIntegerType, Constants.XSD_INTEGER, context);
   }
 
   @Override
-  public XmlSchemaType visitDate(final OASDateType dateType, final SchemaVisitorContext context) {
-    tracer.log(
-      "<> visitDate(td=" + dateType.name() + ":" + dateType.type() + ")"
+  public XmlSchemaType visitBoolean(final OASBooleanType oasBooleanType, final SchemaVisitorContext context) {
+    CompiledSimpleTypeInfo typeInfo = commonSimpleTypePreamble(
+        oasBooleanType, context,
+      "<> visitBoolean(td=" + oasBooleanType.name() + ":" + oasBooleanType.type() + ")"
     );
-    tracer.increaseIndent();
 
-    tracer.decreaseIndent();
-    return null;
+    if (!context.isTopLevel() && typeInfo.getSchemaType() != null && typeInfo.getAnnotation() == null) {
+      tracer.decreaseIndent();
+      return typeInfo.getSchemaType();
+    }
+
+    final XmlSchemaSimpleTypeRestriction content = prepareSimpleTypeRestriction(typeInfo.getSchemaType(), Constants.XSD_BOOLEAN, context);
+
+//    final List<Boolean> enums = oasBooleanType.enums(); /* resolveBooleanEnumFacet(oasBooleanType); */
+//    if (!enums.isEmpty()) {
+//      for (Boolean anEnum : enums) {
+//        final XmlSchemaEnumerationFacet enumValue = new XmlSchemaEnumerationFacet();
+//        enumValue.setValue(anEnum);
+//        content.getFacets().add(enumValue);
+//      }
+//    }
+
+    if (!context.isTopLevel() && typeInfo.getSchemaType() == null && typeInfo.getAnnotation() == null && content.getFacets().isEmpty()) {
+      tracer.decreaseIndent();
+      return collection.getTypeByQName(Constants.XSD_BOOLEAN);
+    } else {
+      final XmlSchemaSimpleType simpleType = new XmlSchemaSimpleType(getSchema(typeInfo.getNamespaceURI()), false);
+      simpleType.setContent(content);
+      if (context.isTopLevel()) {
+        simpleType.setName(oasBooleanType.name());
+        simpleType.setAnnotation(typeInfo.getAnnotation());
+        updateVisitedType(createQName(typeInfo.getNamespaceURI(), typeInfo.getTypeName()), simpleType);
+      }
+      tracer.decreaseIndent();
+      return simpleType;
+    }
   }
 
   @Override
-  public XmlSchemaType visitDateTime(final OASDateTimeType dateTimeType, final SchemaVisitorContext context) {
-    tracer.log(
-      "<> visitDateTime(td=" + dateTimeType.name() + ":" + dateTimeType.type() + ")"
+  public XmlSchemaType visitDate(final OASDateType oasDateType, final SchemaVisitorContext context) {
+    CompiledSimpleTypeInfo typeInfo = commonSimpleTypePreamble(
+        oasDateType, context,
+      "<> visitDate(td=" + oasDateType.name() + ":" + oasDateType.type() + ")"
     );
-    tracer.increaseIndent();
 
-    tracer.decreaseIndent();
-    return null;
+    if (!context.isTopLevel() && typeInfo.getSchemaType() != null && typeInfo.getAnnotation() == null) {
+      tracer.decreaseIndent();
+      return typeInfo.getSchemaType();
+    }
+
+    final XmlSchemaSimpleTypeRestriction content = prepareSimpleTypeRestriction(typeInfo.getSchemaType(), Constants.XSD_DATE, context);
+
+    if (!context.isTopLevel() && typeInfo.getSchemaType() == null && typeInfo.getAnnotation() == null) {
+      tracer.decreaseIndent();
+      return collection.getTypeByQName(Constants.XSD_DATE);
+    } else {
+      final XmlSchemaSimpleType simpleType = new XmlSchemaSimpleType(getSchema(typeInfo.getNamespaceURI()), false);
+      simpleType.setContent(content);
+      if (context.isTopLevel()) {
+        simpleType.setName(oasDateType.name());
+        simpleType.setAnnotation(typeInfo.getAnnotation());
+        updateVisitedType(createQName(typeInfo.getNamespaceURI(), typeInfo.getTypeName()), simpleType);
+      }
+      tracer.decreaseIndent();
+      return simpleType;
+    }
   }
 
   @Override
-  public XmlSchemaType visitNull(final OASNullType nullType, final SchemaVisitorContext context) {
-    // TODO Auto-generated method stub
-    return null;
+  public XmlSchemaType visitDateTime(final OASDateTimeType oasDateTimeType, final SchemaVisitorContext context) {
+    CompiledSimpleTypeInfo typeInfo = commonSimpleTypePreamble(
+        oasDateTimeType, context,
+      "<> visitDateTime(td=" + oasDateTimeType.name() + ":" + oasDateTimeType.type() + ")"
+    );
+
+    if (!context.isTopLevel() && typeInfo.getSchemaType() != null && typeInfo.getAnnotation() == null) {
+      tracer.decreaseIndent();
+      return typeInfo.getSchemaType();
+    }
+
+    final XmlSchemaSimpleTypeRestriction content = prepareSimpleTypeRestriction(typeInfo.getSchemaType(), Constants.XSD_DATETIME, context);
+
+    if (!context.isTopLevel() && typeInfo.getSchemaType() == null && typeInfo.getAnnotation() == null) {
+      tracer.decreaseIndent();
+      return collection.getTypeByQName(Constants.XSD_DATETIME);
+    } else {
+      final XmlSchemaSimpleType simpleType = new XmlSchemaSimpleType(getSchema(typeInfo.getNamespaceURI()), false);
+      simpleType.setContent(content);
+      if (context.isTopLevel()) {
+        simpleType.setName(oasDateTimeType.name());
+        simpleType.setAnnotation(typeInfo.getAnnotation());
+        updateVisitedType(createQName(typeInfo.getNamespaceURI(), typeInfo.getTypeName()), simpleType);
+      }
+      tracer.decreaseIndent();
+      return simpleType;
+    }
+  }
+
+  @Override
+  public XmlSchemaType visitNull(final OASNullType oasNullType, final SchemaVisitorContext context) {
+    tracer.log(
+      "<> visitNull(td=" + oasNullType.name() + ":" + oasNullType.type() + ")"
+    );
+    tracer.increaseIndent();
+
+    final String namespaceURI = calculateTargetNamespaceURI(oasNullType, context);
+    final String typeName = simpleOASTypeName(oasNullType, context);
+
+    if (typeName != null) {
+      Pair<OASType, XmlSchemaType> typeMapEntry = lookupTypeByName(createQName(namespaceURI, context.isTopLevel() ? oasNullType.type() : typeName));
+      if (context.isTopLevel() || OASTypeEquality.equals(oasNullType, typeMapEntry.getKey())) {
+        return typeMapEntry.getValue();
+      }
+    }
+
+    tracer.decreaseIndent();
+    return collection.getTypeByQName(Constants.XSD_ANY);
   }
 
 }

@@ -39,8 +39,8 @@ public class App
   public static void main(final String[] args) {
     // "api-with-examples", "callback-example", "link-example", "petstore", "petstore-expanded", "uspto"
     final String[] remoteSources = new String[] {};
-    // "simple-types", "arrays-simple-items", "arrays-object-items", "arrays-ref-items", "objects-simple-props", "objects-simple-array-props", "goober", "goober2"
-    final String[] localSources = new String[] { "arrays-ref-items" };
+    // "simple-types", "arrays-simple-items", "arrays-arrays-simple-items", "arrays-object-items", "arrays-ref-items", "objects-simple-props", "objects-simple-array-props", "goober", "goober2"
+    final String[] localSources = new String[] { "objects-simple-array-props" };
 
     URL[] remoteURLs = Arrays.stream(remoteSources).map(s -> {
       try {
@@ -109,9 +109,10 @@ public class App
     final XmlSchemaWriter writer = new XmlSchemaWriter(DUMMY_NAMESPACE_URI);
     for (final Entry<String, Schema> entry : model.getSchemas().entrySet()) {
       final XmlSchemaType schemaType = typeCompiler.findXmlSchemaTypeBySchema(entry.getValue());
-      LOGGER.info(String.format("---- %s ----", entry.getKey()));
+      LOGGER.info(String.format("---- %s: %s", entry.getKey(), entry.getValue()));
       if (schemaType != null) {
-        LOGGER.info("\n" + writer.writeSchema(schemaType));
+        Arrays.stream(writer.writeSchema(schemaType).toString().split("\n")).forEach(s -> LOGGER.info(s));
+//        LOGGER.info("\n" + writer.writeSchema(schemaType));
       }
     }
   }

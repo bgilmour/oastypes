@@ -47,7 +47,7 @@ public class XmlSchemaArrayType extends XmlSchemaType {
    * Update an XML schema element.
    *
    * @param element
-   *          the {@link XmlSchemaElement} to be updated
+   *          The {@link XmlSchemaElement} to be updated.
    */
   public void updateElement(final XmlSchemaElement element) {
     assert element.getSchemaType() == this;

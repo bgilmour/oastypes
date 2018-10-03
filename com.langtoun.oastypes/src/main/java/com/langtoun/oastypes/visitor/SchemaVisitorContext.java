@@ -25,10 +25,10 @@ public final class SchemaVisitorContext {
    * Factory method to create a new context object.
    *
    * @param topLevel
-   *          is the visitor acting on a top level schema type
+   *          Is the visitor acting on a top level schema type?
    * @param targetNamespace
-   *          the target namespace that scopes aliases from the uses node
-   * @return a new context object
+   *          The target namespace that scopes aliases from the uses node.
+   * @return A new context object.
    */
   public static SchemaVisitorContext newContext(final boolean topLevel, final String targetNamespace) {
     return new SchemaVisitorContext(topLevel, targetNamespace);
@@ -49,7 +49,7 @@ public final class SchemaVisitorContext {
    * Push a new top level value onto the stack.
    *
    * @param topLevel
-   *          the new top level value
+   *          The new top level value.
    */
   public void pushTopLevel(final Boolean topLevel) {
     topLevelStack.push(topLevel);
@@ -58,7 +58,7 @@ public final class SchemaVisitorContext {
   /**
    * Remove the top level value from the top of the stack.
    *
-   * @return the current top level value
+   * @return The current top level value.
    */
   public Boolean popTopLevel() {
     return topLevelStack.pop();
@@ -67,9 +67,9 @@ public final class SchemaVisitorContext {
   /**
    * Check whether a type declaration has already been visited.
    *
-   * @param typeDecl
-   *          the type declaration that is to be checked
-   * @return true if the type has been visited, otherwise false
+   * @param oasType
+   *          The type declaration that is to be checked.
+   * @return {@code true} if the type has been visited, otherwise {@code false}.
    */
   public boolean isVisitedType(final OASType oasType) {
     return visitedTypes.contains(oasType.type() /* resolvedTypeName(oasType) */);
@@ -78,8 +78,8 @@ public final class SchemaVisitorContext {
   /**
    * Add a type declaration to the set of those already visited.
    *
-   * @param typeDecl
-   *          the type declaration to be added
+   * @param oasType
+   *          The type declaration to be added.
    */
   public void addVisitedType(final OASType oasType) {
     visitedTypes.add(oasType.type() /* resolvedTypeName(oasType) */);
@@ -88,7 +88,7 @@ public final class SchemaVisitorContext {
   /**
    * Get the target namespace that defines the scope of the aliases defined in the uses node.
    *
-   * @return the target namesapce
+   * @return The target namesapce.
    */
   public String getTargetNamespace() {
     return targetNamespace;

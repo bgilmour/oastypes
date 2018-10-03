@@ -1,40 +1,15 @@
 openapi: "3.0.0"
+
 info:
   version: 1.0.0
   title: Schema Object - Objects With Simple Type Properties Tests
+
 servers:
   - url: http://langtoun.com/types
+
 paths:
-  /res:
-    get:
-      operationId: getRes
-      parameters:
-        - name: p1
-          in: query
-          required: false
-          schema:
-            type: array
-            items:
-              type: string
-        - name: p2
-          in: query
-          required: false
-          schema:
-            $ref: '#/components/schemas/T1'
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/T1'
-        default:
-          description: unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/T1'
+  /: {}
+
 components:
   schemas:
 
@@ -52,10 +27,10 @@ components:
           type: number
           format: double
         i1:
-          type: number
+          type: integer
           format: int32
         i2:
-          type: number
+          type: integer
           format: int64
         d1:
           type: string
@@ -82,10 +57,10 @@ components:
           type: number
           format: double
         i1:
-          type: number
+          type: integer
           format: int32
         i2:
-          type: number
+          type: integer
           format: int64
         d1:
           type: string
