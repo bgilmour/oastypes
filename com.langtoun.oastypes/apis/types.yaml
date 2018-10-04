@@ -1,0 +1,18 @@
+types:
+  S1:
+    type: string
+    minLength: 8
+    maxLength: 128
+
+  I1:
+    type: integer
+
+  O1:
+    type: object
+    required:
+      - i1
+    properties:
+      s1:
+        $ref: '#/types/S1'
+      i1:
+        $ref: '#/types/I1'

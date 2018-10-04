@@ -1,0 +1,13 @@
+{
+  "types": {
+    "id": "#mytypes",
+    "S1": {
+      "type": "string"
+    },
+    "I1": {
+      "type": "integer",
+      "format": "int64",
+      "minimum": 256
+    }
+  }
+}

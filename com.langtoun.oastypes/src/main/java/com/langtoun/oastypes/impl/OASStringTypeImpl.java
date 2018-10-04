@@ -74,29 +74,29 @@ public class OASStringTypeImpl extends OASTypeImpl implements OASStringType {
   @Override
   public String toString() {
     final StringBuilder sb = new StringBuilder();
-
     sb.append("{");
     sb.append(super.toString());
 
-    if (minLength != null) {
-      sb.append(",").append(doubleQuote(escapeJson("minLength"))).append(":")
-        .append(minLength.toString());
-    }
-    if (maxLength != null) {
-      sb.append(",").append(doubleQuote(escapeJson("maxLength"))).append(":")
-        .append(maxLength.toString());
-    }
-    if (pattern != null) {
-      sb.append(",").append(doubleQuote(escapeJson("pattern"))).append(":")
-        .append(doubleQuote(escapeJson(pattern.toString())));
-    }
-    if (hasEnums) {
-      sb.append(",").append(doubleQuote(escapeJson("enum"))).append(":")
-        .append(enums.stream().map(s -> doubleQuote(escapeJson(s))).collect(Collectors.joining(",", "[", "]")));
+    if (reference() == null) {
+      if (minLength != null) {
+        sb.append(",").append(doubleQuote(escapeJson("minLength"))).append(":")
+          .append(minLength.toString());
+      }
+      if (maxLength != null) {
+        sb.append(",").append(doubleQuote(escapeJson("maxLength"))).append(":")
+          .append(maxLength.toString());
+      }
+      if (pattern != null) {
+        sb.append(",").append(doubleQuote(escapeJson("pattern"))).append(":")
+          .append(doubleQuote(escapeJson(pattern.toString())));
+      }
+      if (hasEnums) {
+        sb.append(",").append(doubleQuote(escapeJson("enum"))).append(":")
+          .append(enums.stream().map(s -> doubleQuote(escapeJson(s))).collect(Collectors.joining(",", "[", "]")));
+      }
     }
 
     sb.append("}");
-
     return sb.toString();
   }
 

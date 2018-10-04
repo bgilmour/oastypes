@@ -43,11 +43,6 @@ public class OASNullTypeImpl extends OASTypeImpl implements OASNullType {
     return sb.toString();
   }
 
-  @Override
-  public int hashCode() {
-    return super.hashCode();
-  }
-
   /**
    * Create a new builder for an {@link OASNullTypeImpl} object.
    *

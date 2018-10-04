@@ -5,6 +5,8 @@ import static com.langtoun.oastypes.util.OpenApiTypeUtil.isIntegerType;
 import static com.langtoun.oastypes.util.OpenApiTypeUtil.isRequired;
 import static com.langtoun.oastypes.util.OpenApiTypeUtil.schemaNumericTypeName;
 import static com.langtoun.oastypes.util.OverlayUtil.getReference;
+import static com.langtoun.oastypes.util.ReferenceUtil.namespaceAlias;
+import static com.langtoun.oastypes.util.ReferenceUtil.typeName;
 import static com.langtoun.oastypes.util.StringExtensions.singleQuote;
 import static com.langtoun.oastypes.visitor.SchemaVisitorContext.newContext;
 
@@ -57,6 +59,7 @@ import com.langtoun.oastypes.OASStringType;
 import com.langtoun.oastypes.OASType;
 import com.langtoun.oastypes.util.OASTypeEquality;
 import com.langtoun.oastypes.util.OASTypeFactory;
+import com.langtoun.oastypes.util.ReferenceUtil;
 import com.langtoun.oastypes.util.TraceLogger;
 import com.reprezen.kaizen.oasparser.model3.OpenApi3;
 import com.reprezen.kaizen.oasparser.model3.Schema;
@@ -195,9 +198,24 @@ public final class OASTypeToXmlSchemaVisitor implements OASTypeDispatcher<XmlSch
    */
   private String calculateTargetNamespaceURI(final OASType oasType, final SchemaVisitorContext context) {
     if (oasType == null) {
-      return "?unknown?"; //$NON-NLS-1$
+      return "?unknown?";
     } else {
-      return getTargetNamespace();
+      final String namespaceAlias = namespaceAlias(oasType.reference());
+      if (namespaceAlias == null) {
+        tracer.log("-- calculateTargetNamespaceURI: createNamespace(context) ==> " + context.getTargetNamespace());
+        return context.getTargetNamespace();
+      } else {
+        String namespaceURI = getNamespaceAliasEntry(context.getTargetNamespace(), namespaceAlias);
+        if (namespaceURI == null) {
+          namespaceURI = ReferenceUtil.namespaceURI(oasType.reference());
+          addNamespaceAliasMapping(context.getTargetNamespace(), namespaceAlias, namespaceURI);
+        }
+        tracer.log(
+          "-- calculateTargetNamespaceURI: lookupUsingAlias(tns=" + context.getTargetNamespace()
+          + ", alias=" + namespaceAlias + ") ==> " + namespaceURI
+        );
+        return namespaceURI;
+      }
     }
   }
 
@@ -330,7 +348,7 @@ public final class OASTypeToXmlSchemaVisitor implements OASTypeDispatcher<XmlSch
         tracer.log(
           "-- lookupTypeByName: qn=" + qName + " ==> xs=" + typeMapEntry.getValue().getName()
           + " [qn=" + typeMapEntry.getValue().getQName() + "]"
-          );
+        );
       } else {
         tracer.log("-- lookupTypeByName: qn=" + qName + " ==> " + "undefined schema type");
       }
@@ -351,9 +369,8 @@ public final class OASTypeToXmlSchemaVisitor implements OASTypeDispatcher<XmlSch
    *          The {@link OASType} to be added to the type map.
    */
   private void addVisitedType(final QName qName, final OASType oasType) {
-    tracer.log(
-      "-- addVisitedType: qn=" + qName + " ==> td=" + oasType.name() + ":" + oasType.type()
-    );
+    tracer.log("-- addVisitedType: qn=" + qName + " ==> td=" + oasType.name() + ":" + oasType.type());
+    tracer.log("--                 oas=" + oasType);
     if (!visitedTypeMap.containsKey(qName)) {
       schemaToOasTypeMap.put(oasType.schema(), oasType);
       schemaToXmlSchemaMap.put(oasType.schema(), null);
@@ -399,8 +416,8 @@ public final class OASTypeToXmlSchemaVisitor implements OASTypeDispatcher<XmlSch
       + ", tns=" + getTargetNamespace() + ")"
     );
     tracer.increaseIndent();
-    tracer.log("-- schema : " + oasType.schema());
-    tracer.log("-- oasType: " + oasType);
+    tracer.log("-- schema=" + oasType.schema());
+    tracer.log("-- oasType=" + oasType);
     context.pushTopLevel(true);
     final XmlSchemaType schemaType = visit(oasType, context);
     context.popTopLevel();
@@ -463,9 +480,9 @@ public final class OASTypeToXmlSchemaVisitor implements OASTypeDispatcher<XmlSch
 
     if (referencedType == null || expand) {
       context.pushTopLevel(false);
-      tracer.increaseIndent();
+//      tracer.increaseIndent();
       final XmlSchemaType schemaType = visit(oasType, context);
-      tracer.decreaseIndent();
+//      tracer.decreaseIndent();
       context.popTopLevel();
       if (schemaType != null) {
         schemaElement.setSchemaType(schemaType);
@@ -865,7 +882,10 @@ public final class OASTypeToXmlSchemaVisitor implements OASTypeDispatcher<XmlSch
    * @return A {@code String} containing the calculated name.
    */
   private String simpleOASTypeName(final OASType oasType, final SchemaVisitorContext context) {
-    return (context.isTopLevel() || oasType.type() == null) ? oasType.name() : oasType.type();
+    if (oasType.reference() == null) {
+      return (context.isTopLevel() || oasType.type() == null) ? oasType.name() : oasType.type();
+    }
+    return typeName(oasType.reference());
   }
 
   /**
@@ -921,12 +941,12 @@ public final class OASTypeToXmlSchemaVisitor implements OASTypeDispatcher<XmlSch
    * Prepare the type restriction that is to be added as simple type content.
    *
    * @param schemaType
-   *          the simple type object
+   *          The simple type object.
    * @param qName
-   *          the qualified name of the restriction base
+   *          The qualified name of the restriction base.
    * @param context
-   *          the visitor context
-   * @return
+   *          The visitor context.
+   * @return An {@link XmlSchemaSimpleTypeRestriction} object.
    */
   private XmlSchemaSimpleTypeRestriction prepareSimpleTypeRestriction(final XmlSchemaType schemaType, final QName qName, final SchemaVisitorContext context) {
     final XmlSchemaSimpleTypeRestriction content = new XmlSchemaSimpleTypeRestriction();
@@ -970,33 +990,33 @@ public final class OASTypeToXmlSchemaVisitor implements OASTypeDispatcher<XmlSch
 
     final XmlSchemaSimpleTypeRestriction content = prepareSimpleTypeRestriction(typeInfo.getSchemaType(), Constants.XSD_STRING, context);
 
-    final Integer minLengthFacet = oasStringType.minLength(); /* resolveStringMinLengthFacet(stringType); */
-    if (minLengthFacet != null) {
-      final XmlSchemaMinLengthFacet minLength = new XmlSchemaMinLengthFacet();
-      minLength.setValue(minLengthFacet);
-      content.getFacets().add(minLength);
+    final Integer minLength = oasStringType.minLength(); /* resolveStringMinLengthFacet(stringType); */
+    if (minLength != null) {
+      final XmlSchemaFacet minLengthFacet = new XmlSchemaMinLengthFacet();
+      minLengthFacet.setValue(minLength);
+      content.getFacets().add(minLengthFacet);
     }
 
-    final Integer maxLengthFacet = oasStringType.maxLength(); /* resolveStringMaxLengthFacet(stringType); */
-    if (maxLengthFacet != null) {
-      final XmlSchemaMaxLengthFacet maxLength = new XmlSchemaMaxLengthFacet();
-      maxLength.setValue(maxLengthFacet);
-      content.getFacets().add(maxLength);
+    final Integer maxLength = oasStringType.maxLength(); /* resolveStringMaxLengthFacet(stringType); */
+    if (maxLength != null) {
+      final XmlSchemaFacet maxLengthFacet = new XmlSchemaMaxLengthFacet();
+      maxLengthFacet.setValue(maxLength);
+      content.getFacets().add(maxLengthFacet);
     }
 
-    final String patternFacet = oasStringType.pattern(); /* resolveStringPatternFacet(stringType); */
-    if (patternFacet != null) {
-      final XmlSchemaPatternFacet pattern = new XmlSchemaPatternFacet();
-      pattern.setValue(patternFacet);
-      content.getFacets().add(pattern);
+    final String pattern = oasStringType.pattern(); /* resolveStringPatternFacet(stringType); */
+    if (pattern != null) {
+      final XmlSchemaFacet patternFacet = new XmlSchemaPatternFacet();
+      patternFacet.setValue(pattern);
+      content.getFacets().add(patternFacet);
     }
 
     final List<String> enums = oasStringType.enums(); /* resolveStringEnumFacet(oasStringType); */
     if (!enums.isEmpty()) {
       for (String anEnum : enums) {
-        final XmlSchemaEnumerationFacet enumValue = new XmlSchemaEnumerationFacet();
-        enumValue.setValue(anEnum);
-        content.getFacets().add(enumValue);
+        final XmlSchemaFacet enumFacet = new XmlSchemaEnumerationFacet();
+        enumFacet.setValue(anEnum);
+        content.getFacets().add(enumFacet);
       }
     }
 
@@ -1096,12 +1116,12 @@ public final class OASTypeToXmlSchemaVisitor implements OASTypeDispatcher<XmlSch
 
   @Override
   public XmlSchemaType visitNumber(final OASNumberType oasNumberType, final SchemaVisitorContext context) {
-    return createNumericSchemaType(oasNumberType, Constants.XSD_DOUBLE, context);
+    return createNumericSchemaType(oasNumberType, oasNumberType.isDouble() ? Constants.XSD_DOUBLE : Constants.XSD_FLOAT, context);
   }
 
   @Override
   public XmlSchemaType visitInteger(final OASIntegerType oasIntegerType, final SchemaVisitorContext context) {
-    return createNumericSchemaType(oasIntegerType, Constants.XSD_INTEGER, context);
+    return createNumericSchemaType(oasIntegerType, oasIntegerType.isLong() ? Constants.XSD_LONG : Constants.XSD_INTEGER, context);
   }
 
   @Override

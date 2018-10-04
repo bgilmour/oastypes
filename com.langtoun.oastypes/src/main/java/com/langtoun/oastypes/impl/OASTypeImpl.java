@@ -1,5 +1,6 @@
 package com.langtoun.oastypes.impl;
 
+import static com.langtoun.oastypes.util.ReferenceUtil.typeName;
 import static com.langtoun.oastypes.util.StringExtensions.doubleQuote;
 import static org.apache.commons.text.StringEscapeUtils.escapeJson;
 
@@ -59,7 +60,7 @@ public class OASTypeImpl implements OASType {
     this.reference = reference;
     this.mappedName = mappedName;
     // members extracted from the model
-    this.name = schema.getName();
+    this.name = reference != null ? typeName(reference) : schema.getName();
     this.type = schemaType;
     this.format = schema.getFormat();
     this.title = schema.getTitle();
@@ -103,12 +104,12 @@ public class OASTypeImpl implements OASType {
 
   @Override
   public String name() {
-    return name;
+    return reference != null ? mappedName : name;
   }
 
   @Override
   public String type() {
-    return type;
+    return reference != null ? reference.getRefString() : type;
   }
 
   @Override
@@ -183,49 +184,67 @@ public class OASTypeImpl implements OASType {
     sb.append(doubleQuote("class")).append(":")
       .append(doubleQuote(escapeJson(getClass().getSimpleName())));
     if (reference != null) {
-      sb.append(",").append(doubleQuote("$ref")).append(":")
-        .append(doubleQuote(reference.getRefString()));
-    }
+      sb.append(",").append(doubleQuote("mappedName")).append(":")
+      .append(doubleQuote(mappedName))
+      .append(",").append(doubleQuote("$ref")).append(":")
+      .append(doubleQuote(reference.getRefString()));
+    } else {
+      sb.append(",").append(doubleQuote("name")).append(":")
+        .append(name != null ? doubleQuote(escapeJson(name)) : "null")
+        .append(",").append(doubleQuote("type")).append(":")
+        .append(type != null ? doubleQuote(escapeJson(type)) : "null");
 
-    sb.append(",").append(doubleQuote("name")).append(":")
-      .append(name != null ? doubleQuote(escapeJson(name)) : "null")
-      .append(",").append(doubleQuote("type")).append(":")
-      .append(type != null ? doubleQuote(escapeJson(type)) : "null");
-
-    if (format != null) {
-      sb.append(",").append(doubleQuote("format")).append(":")
-        .append(doubleQuote(escapeJson(format)));
-    }
-    if (title != null) {
-      sb.append(",").append(doubleQuote("title")).append(":")
-        .append(doubleQuote(escapeJson(title)));
-    }
-    if (description != null) {
-      sb.append(",").append(doubleQuote("description")).append(":")
-        .append(doubleQuote(escapeJson(description)));
-    }
-    if (defaultValue != null) {
-      sb.append(",").append(doubleQuote("default")).append(":")
-        .append(doubleQuote(escapeJson(defaultValue.toString())));
-    }
-    if (nullable != null) {
-      sb.append(",").append(doubleQuote("nullable")).append(":")
-        .append(nullable.toString());
-    }
-    if (readOnly != null) {
-      sb.append(",").append(doubleQuote("readOnly")).append(":")
-        .append(readOnly.toString());
-    }
-    if (writeOnly != null) {
-      sb.append(",").append(doubleQuote("writeOnly")).append(":")
-        .append(writeOnly.toString());
-    }
-    if (deprecated != null) {
-      sb.append(",").append(doubleQuote("deprecated")).append(":")
-        .append(deprecated.toString());
+      if (format != null) {
+        sb.append(",").append(doubleQuote("format")).append(":")
+          .append(doubleQuote(escapeJson(format)));
+      }
+      if (title != null) {
+        sb.append(",").append(doubleQuote("title")).append(":")
+          .append(doubleQuote(escapeJson(title)));
+      }
+      if (description != null) {
+        sb.append(",").append(doubleQuote("description")).append(":")
+          .append(doubleQuote(escapeJson(description)));
+      }
+      if (defaultValue != null) {
+        sb.append(",").append(doubleQuote("default")).append(":")
+          .append(doubleQuote(escapeJson(defaultValue.toString())));
+      }
+      if (nullable != null) {
+        sb.append(",").append(doubleQuote("nullable")).append(":")
+          .append(nullable.toString());
+      }
+      if (readOnly != null) {
+        sb.append(",").append(doubleQuote("readOnly")).append(":")
+          .append(readOnly.toString());
+      }
+      if (writeOnly != null) {
+        sb.append(",").append(doubleQuote("writeOnly")).append(":")
+          .append(writeOnly.toString());
+      }
+      if (deprecated != null) {
+        sb.append(",").append(doubleQuote("deprecated")).append(":")
+          .append(deprecated.toString());
+      }
     }
 
     return sb.toString();
+  }
+
+  @Override
+  public boolean equals(Object other) {
+    if (other != null && getClass() == other.getClass()) {
+      // field-wise comparison
+      final OASType otherType = (OASType) other;
+      if (reference != null && otherType.reference() != null && !reference.getNormalizedRef().equals(otherType.reference().getNormalizedRef())) {
+        return false;
+      }
+      if (schema != null ? !schema.equals(otherType.schema()) : otherType.schema() != null) {
+        return false;
+      }
+      return true;
+    }
+    return false;
   }
 
   @Override

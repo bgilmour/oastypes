@@ -15,16 +15,79 @@ components:
 
     O1-REF:
       type: object
+      required:
+        - s1-lcl
+        - i1-lcl
       properties:
-        s1:
+        s1-lcl:
           $ref: '#/components/schemas/S1'
-        s2:
-          type: string
-        i1:
+        s1-yaml:
+          $ref: 'types.yaml#/types/S1'
+        s1-json:
+          $ref: 'types.json#/types/S1'
+        i1-lcl:
           $ref: '#/components/schemas/I1'
+        i1-yaml:
+          $ref: 'types.yaml#/types/I1'
+        i1-json:
+          $ref: 'types.json#/types/I1'
+
+    O2-REF:
+      $ref: 'types.yaml#/types/O1'
+
+    O3-REF:
+      type: object
+      properties:
+        f1:
+          type: array
+          items:
+            $ref: '#/components/schemas/O1-REF'
+        f2:
+          type: object
+          required: [ a1, a2, a4 ]
+          properties:
+            a1:
+              type: array
+              items:
+                type: integer
+                format: int64
+                minimum: 100
+                exclusiveMinimum: false
+            a2:
+              type: array
+              items:
+                type: integer
+                format: int32
+                minimum: 100
+                exclusiveMinimum: true
+            a3:
+              type: array
+              items:
+                type: integer
+                format: int64
+                maximum: 1000
+                exclusiveMaximum: false
+              maxItems: 128
+            a4:
+              type: array
+              items:
+                type: integer
+                format: int32
+                maximum: 1000
+                exclusiveMaximum: true
+              minItems: 32
+              maxItems: 256
+        f3:
+          $ref: '#/components/schemas/O2-REF'
 
     S1:
       type: string
 
+    S2:
+      $ref: 'types.yaml#/types/S1'
+
     I1:
       type: integer
+
+    I2:
+      $ref: 'types.yaml#/types/I1'

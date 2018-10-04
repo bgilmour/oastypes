@@ -49,43 +49,38 @@ public class OASNumberTypeImpl extends OASNumericTypeImpl implements OASNumberTy
   @Override
   public String toString() {
     final StringBuilder sb = new StringBuilder();
-
     sb.append("{");
     sb.append(super.toString());
 
-    if (minimum != null) {
-      sb.append(",").append(doubleQuote(escapeJson("minimum"))).append(":")
-        .append(isDouble ? minimum.doubleValue() : minimum.floatValue());
-    }
-    if (maximum != null) {
-      sb.append(",").append(doubleQuote(escapeJson("maximum"))).append(":")
-        .append(isDouble ? maximum.doubleValue() : maximum.floatValue());
-    }
-    if (exclusiveMinimum != null) {
-      sb.append(",").append(doubleQuote(escapeJson("exclusiveMinimum"))).append(":")
-        .append(exclusiveMinimum.toString());
-    }
-    if (exclusiveMaximum != null) {
-      sb.append(",").append(doubleQuote(escapeJson("exclusiveMaximum"))).append(":")
-        .append(exclusiveMaximum.toString());
-    }
-    if (multipleOf != null) {
-      sb.append(",").append(doubleQuote(escapeJson("multipleOf"))).append(":")
-        .append(isDouble ? multipleOf.doubleValue() : multipleOf.floatValue());
-    }
-    if (hasEnums) {
-      sb.append(",").append(doubleQuote(escapeJson("enum"))).append(":")
-        .append(enums.stream().map(Object::toString).collect(Collectors.joining(",", "[", "]")));
+    if (reference() == null) {
+      if (minimum != null) {
+        sb.append(",").append(doubleQuote(escapeJson("minimum"))).append(":")
+          .append(isDouble ? minimum.doubleValue() : minimum.floatValue());
+      }
+      if (maximum != null) {
+        sb.append(",").append(doubleQuote(escapeJson("maximum"))).append(":")
+          .append(isDouble ? maximum.doubleValue() : maximum.floatValue());
+      }
+      if (exclusiveMinimum != null) {
+        sb.append(",").append(doubleQuote(escapeJson("exclusiveMinimum"))).append(":")
+          .append(exclusiveMinimum.toString());
+      }
+      if (exclusiveMaximum != null) {
+        sb.append(",").append(doubleQuote(escapeJson("exclusiveMaximum"))).append(":")
+          .append(exclusiveMaximum.toString());
+      }
+      if (multipleOf != null) {
+        sb.append(",").append(doubleQuote(escapeJson("multipleOf"))).append(":")
+          .append(isDouble ? multipleOf.doubleValue() : multipleOf.floatValue());
+      }
+      if (hasEnums) {
+        sb.append(",").append(doubleQuote(escapeJson("enum"))).append(":")
+          .append(enums.stream().map(Object::toString).collect(Collectors.joining(",", "[", "]")));
+      }
     }
 
     sb.append("}");
-
     return sb.toString();
-  }
-
-  @Override
-  public int hashCode() {
-    return super.hashCode();
   }
 
   /**

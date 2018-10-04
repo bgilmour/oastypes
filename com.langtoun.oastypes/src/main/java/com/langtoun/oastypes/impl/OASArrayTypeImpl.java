@@ -76,28 +76,29 @@ public class OASArrayTypeImpl extends OASTypeImpl implements OASArrayType {
   @Override
   public String toString() {
     final StringBuilder sb = new StringBuilder();
-
     sb.append("{");
     sb.append(super.toString());
 
-    if (items != null) {
-//      sb.append(",").append(doubleQuote(escapeJson("items"))).append(":")
-//        .append(items);
+    if (reference() == null) {
+      if (items != null) {
+        sb.append(",").append(doubleQuote(escapeJson("items"))).append(":")
+          .append(items);
+      }
+      if (minItems != null) {
+        sb.append(",").append(doubleQuote(escapeJson("minItems"))).append(":")
+          .append(minItems.toString());
+      }
+      if (maxItems != null) {
+        sb.append(",").append(doubleQuote(escapeJson("maxItems"))).append(":")
+          .append(maxItems.toString());
+      }
+      if (uniqueItems != null) {
+        sb.append(",").append(doubleQuote(escapeJson("uniqueItems"))).append(":")
+          .append(uniqueItems.toString());
+      }
     }
-    if (minItems != null) {
-      sb.append(",").append(doubleQuote(escapeJson("minItems"))).append(":")
-        .append(minItems.toString());
-    }
-    if (maxItems != null) {
-      sb.append(",").append(doubleQuote(escapeJson("maxItems"))).append(":")
-        .append(maxItems.toString());
-    }
-    if (uniqueItems != null) {
-      sb.append(",").append(doubleQuote(escapeJson("uniqueItems"))).append(":")
-        .append(uniqueItems.toString());
-    }
-    sb.append("}");
 
+    sb.append("}");
     return sb.toString();
   }
 
