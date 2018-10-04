@@ -4,6 +4,8 @@ import static com.langtoun.oastypes.util.OverlayUtil.getReference;
 import static com.langtoun.oastypes.util.StringExtensions.doubleQuote;
 import static org.apache.commons.text.StringEscapeUtils.escapeJson;
 
+import java.util.Map;
+
 import com.langtoun.oastypes.OASArrayType;
 import com.langtoun.oastypes.OASType;
 import com.langtoun.oastypes.util.OASTypeFactory;
@@ -79,8 +81,8 @@ public class OASArrayTypeImpl extends OASTypeImpl implements OASArrayType {
     sb.append(super.toString());
 
     if (items != null) {
-      sb.append(",").append(doubleQuote(escapeJson("items"))).append(":")
-        .append(items);
+//      sb.append(",").append(doubleQuote(escapeJson("items"))).append(":")
+//        .append(items);
     }
     if (minItems != null) {
       sb.append(",").append(doubleQuote(escapeJson("minItems"))).append(":")
@@ -99,6 +101,16 @@ public class OASArrayTypeImpl extends OASTypeImpl implements OASArrayType {
     return sb.toString();
   }
 
+  @Override
+  public int hashCode() {
+    int hash = super.hashCode();
+    hash = 37 * hash + (items != null  ? items.schema().hashCode() : 0);
+    hash = 37 * hash + (minItems != null ? minItems.hashCode() : 0);
+    hash = 37 * hash + (maxItems != null ? maxItems.hashCode() : 0);
+    hash = 37 * hash + (uniqueItems != null ? uniqueItems.hashCode() : 0);
+    return hash;
+  }
+
   /**
    * Create a new builder for an {@link OASArrayTypeImpl} object.
    *
@@ -113,28 +125,32 @@ public class OASArrayTypeImpl extends OASTypeImpl implements OASArrayType {
    *          The {@link Schema} that will be used to build the {@link OASArrayTypeImpl}.
    * @param reference
    *          A {@link Reference} associated with the schema which may be {@code null}.
+   * @param visitedTypes
+   *          A {@link Map} that tracks the visited schemas and the types that were created.
+   *          This is used to guard against infinite recursion.
    * @return The {@link Builder} object.
    */
-  public static Builder builder(final OASType parent, final String mappedName, final String schemaType, final Schema schema, final Reference reference) {
-    return new Builder(parent, mappedName, schemaType, schema, reference);
+  public static Builder builder(final OASType parent, final String mappedName, final String schemaType, final Schema schema, final Reference reference, final Map<Schema, OASType> visitedTypes) {
+    return new Builder(parent, mappedName, schemaType, schema, reference, visitedTypes);
   }
 
   public static class Builder {
     private final OASArrayTypeImpl oasArrayType;
     private final Schema schema;
 
-    private Builder(final OASType parent, final String mappedName, final String schemaType, final Schema schema, final Reference reference) {
+    private Builder(final OASType parent, final String mappedName, final String schemaType, final Schema schema, final Reference reference, final Map<Schema, OASType> visitedTypes) {
       oasArrayType = new OASArrayTypeImpl(parent, mappedName, schemaType, schema, reference);
       this.schema = schema;
+      visitedTypes.put(schema,  oasArrayType);
     }
 
-    public Builder items() {
+    public Builder items(final Map<Schema, OASType> visitedTypes) {
       final Schema itemsSchema = schema.getItemsSchema();
 
       Overlay<Schema> itemsOverlay = Overlay.of(schema, "itemsSchema", Schema.class);
       Reference reference = getReference(itemsOverlay);
 
-      oasArrayType.items = OASTypeFactory.createOASType(oasArrayType, "items", itemsSchema, reference);
+      oasArrayType.items = OASTypeFactory.createOASType(oasArrayType, "items", itemsSchema, reference, visitedTypes);
       return this;
     }
 

@@ -100,6 +100,16 @@ public class OASStringTypeImpl extends OASTypeImpl implements OASStringType {
     return sb.toString();
   }
 
+  @Override
+  public int hashCode() {
+    int hash = super.hashCode();
+    hash = 37 * hash + (minLength != null ? minLength.hashCode() : 0);
+    hash = 37 * hash + (maxLength != null ? maxLength.hashCode() : 0);
+    hash = 37 * hash + (pattern != null ? pattern.hashCode() : 0);
+    hash = 37 * hash + enums.hashCode();
+    return hash;
+  }
+
   /**
    * Create a new builder for an {@link OASStringTypeImpl} object.
    *

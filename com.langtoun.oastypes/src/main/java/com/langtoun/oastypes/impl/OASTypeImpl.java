@@ -228,4 +228,20 @@ public class OASTypeImpl implements OASType {
     return sb.toString();
   }
 
+  @Override
+  public int hashCode() {
+    int hash = 13;
+    hash = 37 * hash + (name != null ? name.hashCode() : 0);
+    hash = 37 * hash + (type != null ? type.hashCode() : 0);
+    hash = 37 * hash + (format != null ? format.hashCode() : 0);
+    hash = 37 * hash + (title != null ? title.hashCode() : 0);
+    hash = 37 * hash + (description != null ? description.hashCode() : 0);
+    hash = 37 * hash + (defaultValue != null ? defaultValue.hashCode() : 0);
+    hash = 37 * hash + (nullable != null ? nullable.hashCode() : 0);
+    hash = 37 * hash + (readOnly != null ? readOnly.hashCode() : 0);
+    hash = 37 * hash + (writeOnly != null ? writeOnly.hashCode() : 0);
+    hash = 37 * hash + (deprecated != null ? deprecated.hashCode() : 0);
+    return hash;
+  }
+
 }

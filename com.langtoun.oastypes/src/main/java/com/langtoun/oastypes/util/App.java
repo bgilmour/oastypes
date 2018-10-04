@@ -39,8 +39,11 @@ public class App
   public static void main(final String[] args) {
     // "api-with-examples", "callback-example", "link-example", "petstore", "petstore-expanded", "uspto"
     final String[] remoteSources = new String[] {};
-    // "simple-types", "arrays-simple-items", "arrays-arrays-simple-items", "arrays-object-items", "arrays-ref-items", "objects-simple-props", "objects-simple-array-props", "goober", "goober2"
-    final String[] localSources = new String[] { "objects-simple-array-props" };
+    // "simple-types",
+    // "arrays-simple-items", "arrays-arrays-simple-items", "arrays-object-items", "arrays-ref-items",
+    // "objects-simple-props", "objects-simple-array-props", "objects-ref-props",
+    // "tree", "goober", "goober2"
+    final String[] localSources = new String[] { "objects-ref-props" };
 
     URL[] remoteURLs = Arrays.stream(remoteSources).map(s -> {
       try {

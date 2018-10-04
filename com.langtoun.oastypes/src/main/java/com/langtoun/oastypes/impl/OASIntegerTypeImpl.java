@@ -83,6 +83,11 @@ public class OASIntegerTypeImpl extends OASNumericTypeImpl implements OASInteger
     return sb.toString();
   }
 
+  @Override
+  public int hashCode() {
+    return super.hashCode();
+  }
+
   /**
    * Create a new builder for an {@link OASIntegerTypeImpl} object.
    *

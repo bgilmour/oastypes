@@ -101,8 +101,8 @@ public class OASObjectTypeImpl extends OASTypeImpl implements OASObjectType {
       sb.append(required.stream().map(s -> doubleQuote(escapeJson(s))).collect(Collectors.joining(",", "[", "]")));
     }
     if (hasProperties) {
-      sb.append(",").append(doubleQuote(escapeJson("properties"))).append(":");
-      sb.append(properties.entrySet().stream().map(e -> String.format("\"%s\":%s", e.getKey(), e.getValue())).collect(Collectors.joining(",", "{", "}")));
+//      sb.append(",").append(doubleQuote(escapeJson("properties"))).append(":");
+//      sb.append(properties.entrySet().stream().map(e -> String.format("\"%s\":%s", e.getKey(), e.getValue())).collect(Collectors.joining(",", "{", "}")));
     }
     if (minProperties != null) {
       sb.append(",").append(doubleQuote(escapeJson("minProperties"))).append(":")
@@ -115,6 +115,16 @@ public class OASObjectTypeImpl extends OASTypeImpl implements OASObjectType {
     sb.append("}");
 
     return sb.toString();
+  }
+
+  @Override
+  public int hashCode() {
+    int hash = super.hashCode();
+    hash = 37 * hash + required.hashCode();
+    hash = 37 * hash + properties.hashCode();
+    hash = 37 * hash + (minProperties != null ? minProperties.hashCode() : 0);
+    hash = 37 * hash + (maxProperties != null ? maxProperties.hashCode() : 0);
+    return hash;
   }
 
   /**
@@ -131,19 +141,23 @@ public class OASObjectTypeImpl extends OASTypeImpl implements OASObjectType {
    *          The {@link Schema} that will be used to build the {@link OASObjectTypeImpl}.
    * @param reference
    *          A {@link Reference} associated with the schema which may be {@code null}.
+   * @param visitedTypes
+   *          A {@link Map} that tracks the visited schemas and the types that were created.
+   *          This is used to guard against infinite recursion.
    * @return The {@link Builder} object.
    */
-  public static Builder builder(final OASType parent, final String mappedName, final String schemaType, final Schema schema, final Reference reference) {
-    return new Builder(parent, mappedName, schemaType, schema, reference);
+  public static Builder builder(final OASType parent, final String mappedName, final String schemaType, final Schema schema, final Reference reference, final Map<Schema, OASType> visitedTypes) {
+    return new Builder(parent, mappedName, schemaType, schema, reference, visitedTypes);
   }
 
   public static class Builder {
     private final OASObjectTypeImpl oasObjectType;
     private final Schema schema;
 
-    private Builder(final OASType parent, final String mappedName, final String schemaType, final Schema schema, final Reference reference) {
+    private Builder(final OASType parent, final String mappedName, final String schemaType, final Schema schema, final Reference reference, final Map<Schema, OASType> visitedTypes) {
       oasObjectType = new OASObjectTypeImpl(parent, mappedName, schemaType, schema, reference);
       this.schema = schema;
+      visitedTypes.put(schema,  oasObjectType);
     }
 
     public Builder required() {
@@ -154,14 +168,14 @@ public class OASObjectTypeImpl extends OASTypeImpl implements OASObjectType {
       return this;
     }
 
-    public Builder properties() {
+    public Builder properties(final Map<Schema, OASType> visitedTypes) {
       final Map<String, Schema> properties = schema.getProperties();
       oasObjectType.properties =
         properties.entrySet().stream()
           .map(e ->
             new AbstractMap.SimpleEntry<>(
               e.getKey(),
-              OASTypeFactory.createOASType(oasObjectType, e.getKey(), e.getValue(), getReference(properties, e.getKey()))
+              OASTypeFactory.createOASType(oasObjectType, e.getKey(), e.getValue(), getReference(properties, e.getKey()), visitedTypes)
             )
           )
           .collect(toLinkedMap(Entry::getKey, Entry::getValue));

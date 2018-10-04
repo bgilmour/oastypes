@@ -83,6 +83,11 @@ public class OASNumberTypeImpl extends OASNumericTypeImpl implements OASNumberTy
     return sb.toString();
   }
 
+  @Override
+  public int hashCode() {
+    return super.hashCode();
+  }
+
   /**
    * Create a new builder for an {@link OASNumberTypeImpl} object.
    *

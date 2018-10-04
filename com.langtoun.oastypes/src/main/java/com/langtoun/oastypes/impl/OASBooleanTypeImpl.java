@@ -43,6 +43,11 @@ public class OASBooleanTypeImpl extends OASTypeImpl implements OASBooleanType {
     return sb.toString();
   }
 
+  @Override
+  public int hashCode() {
+    return super.hashCode();
+  }
+
   /**
    * Create a new builder for an {@link OASBooleanTypeImpl} object.
    *

@@ -1,0 +1,30 @@
+openapi: "3.0.0"
+
+info:
+  version: 1.0.0
+  title: Schema Object - Objects With Simple Type Properties Tests
+
+servers:
+  - url: http://langtoun.com/types
+
+paths:
+  /: {}
+
+components:
+  schemas:
+
+    O1-REF:
+      type: object
+      properties:
+        s1:
+          $ref: '#/components/schemas/S1'
+        s2:
+          type: string
+        i1:
+          $ref: '#/components/schemas/I1'
+
+    S1:
+      type: string
+
+    I1:
+      type: integer

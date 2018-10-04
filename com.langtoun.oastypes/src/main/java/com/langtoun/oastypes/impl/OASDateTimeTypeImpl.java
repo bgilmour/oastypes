@@ -43,6 +43,11 @@ public class OASDateTimeTypeImpl extends OASTypeImpl implements OASDateTimeType 
     return sb.toString();
   }
 
+  @Override
+  public int hashCode() {
+    return super.hashCode();
+  }
+
   /**
    * Create a new builder for an {@link OASDateTimeTypeImpl} object.
    *
