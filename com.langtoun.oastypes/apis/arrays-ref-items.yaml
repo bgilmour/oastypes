@@ -9,36 +9,7 @@ servers:
 
 paths:
 
-  /res:
-    get:
-      operationId: getRes
-      parameters:
-        - name: p1
-          in: query
-          required: false
-          schema:
-            type: array
-            items:
-              type: string
-        - name: p2
-          in: query
-          required: false
-          schema:
-            $ref: '#/components/schemas/T1'
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/T1'
-        default:
-          description: unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/T1'
+  /: {}
 
 components:
   schemas:
@@ -47,6 +18,7 @@ components:
       type: string
 
     O1:
+      type: object
       properties:
         s1:
           $ref: '#/components/schemas/S1'

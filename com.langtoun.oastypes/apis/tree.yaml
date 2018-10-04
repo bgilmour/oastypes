@@ -1,0 +1,31 @@
+openapi: "3.0.0"
+
+info:
+  version: 1.0.0
+  title: Tree Structure
+
+servers:
+  - url: http://langtoun.com/types
+
+paths:
+
+  /: {}
+
+components:
+  schemas:
+
+    Payload:
+      type: string
+
+    Tree:
+      type: object
+      properties:
+        payload:
+          $ref: '#/components/schemas/Payload'
+        nodes:
+          type: array
+          items:
+            $ref: '#/components/schemas/Tree'
+
+
+

@@ -49,37 +49,37 @@ public class OASIntegerTypeImpl extends OASNumericTypeImpl implements OASInteger
   @Override
   public String toString() {
     final StringBuilder sb = new StringBuilder();
-
     sb.append("{");
     sb.append(super.toString());
 
-    if (minimum != null) {
-      sb.append(",").append(doubleQuote(escapeJson("minimum"))).append(":")
-        .append(isLong ? minimum.longValue() : minimum.intValue());
-    }
-    if (maximum != null) {
-      sb.append(",").append(doubleQuote(escapeJson("maximum"))).append(":")
-        .append(isLong ? maximum.longValue() : maximum.intValue());
-    }
-    if (exclusiveMinimum != null) {
-      sb.append(",").append(doubleQuote(escapeJson("exclusiveMinimum"))).append(":")
-        .append(exclusiveMinimum.toString());
-    }
-    if (exclusiveMaximum != null) {
-      sb.append(",").append(doubleQuote(escapeJson("exclusiveMaximum"))).append(":")
-        .append(exclusiveMaximum.toString());
-    }
-    if (multipleOf != null) {
-      sb.append(",").append(doubleQuote(escapeJson("multipleOf"))).append(":")
-        .append(isLong ? multipleOf.longValue() : multipleOf.intValue());
-    }
-    if (hasEnums) {
-      sb.append(",").append(doubleQuote(escapeJson("enum"))).append(":")
-        .append(enums.stream().map(Object::toString).collect(Collectors.joining(",", "[", "]")));
+    if (reference() == null) {
+      if (minimum != null) {
+        sb.append(",").append(doubleQuote(escapeJson("minimum"))).append(":")
+          .append(isLong ? minimum.longValue() : minimum.intValue());
+      }
+      if (maximum != null) {
+        sb.append(",").append(doubleQuote(escapeJson("maximum"))).append(":")
+          .append(isLong ? maximum.longValue() : maximum.intValue());
+      }
+      if (exclusiveMinimum != null) {
+        sb.append(",").append(doubleQuote(escapeJson("exclusiveMinimum"))).append(":")
+          .append(exclusiveMinimum.toString());
+      }
+      if (exclusiveMaximum != null) {
+        sb.append(",").append(doubleQuote(escapeJson("exclusiveMaximum"))).append(":")
+          .append(exclusiveMaximum.toString());
+      }
+      if (multipleOf != null) {
+        sb.append(",").append(doubleQuote(escapeJson("multipleOf"))).append(":")
+          .append(isLong ? multipleOf.longValue() : multipleOf.intValue());
+      }
+      if (hasEnums) {
+        sb.append(",").append(doubleQuote(escapeJson("enum"))).append(":")
+          .append(enums.stream().map(Object::toString).collect(Collectors.joining(",", "[", "]")));
+      }
     }
 
     sb.append("}");
-
     return sb.toString();
   }
 

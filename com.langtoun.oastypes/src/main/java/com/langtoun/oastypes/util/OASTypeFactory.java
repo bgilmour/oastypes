@@ -1,5 +1,8 @@
 package com.langtoun.oastypes.util;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.log4j.Logger;
 
 import com.langtoun.oastypes.OASType;
@@ -27,6 +30,10 @@ public class OASTypeFactory {
   }
 
   public static OASType createOASType(final OASType parent, final String mappedName, final Schema schema, final Reference reference) {
+    return createOASType(parent, mappedName, schema, reference, new HashMap<Schema, OASType>());
+  }
+
+  public static OASType createOASType(final OASType parent, final String mappedName, final Schema schema, final Reference reference, final Map<Schema, OASType> visitedTypes) {
     /*
      * handle schema object cases
      *
@@ -38,7 +45,10 @@ public class OASTypeFactory {
      * - [ ] anyOf
      *
      */
-    final OASType oasType;
+    OASType oasType = visitedTypes.getOrDefault(schema,  null);
+    if (oasType != null) {
+      return oasType;
+    }
 
     String schemaType = schema.getType();
     if (schemaType == null) {
@@ -52,17 +62,17 @@ public class OASTypeFactory {
     switch (schemaType) {
       case "object":
         oasType =
-          OASObjectTypeImpl.builder(parent, mappedName, schemaType, schema, reference)
+          OASObjectTypeImpl.builder(parent, mappedName, schemaType, schema, reference, visitedTypes)
             .required()
-            .properties()
+            .properties(visitedTypes)
             .minProperties()
             .maxProperties()
             .build();
         break;
       case "array":
         oasType =
-          OASArrayTypeImpl.builder(parent, mappedName, schemaType, schema, reference)
-            .items()
+          OASArrayTypeImpl.builder(parent, mappedName, schemaType, schema, reference, visitedTypes)
+            .items(visitedTypes)
             .minItems()
             .maxItems()
             .uniqueItems()

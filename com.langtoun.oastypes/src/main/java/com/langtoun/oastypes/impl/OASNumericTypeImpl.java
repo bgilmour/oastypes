@@ -88,4 +88,16 @@ public class OASNumericTypeImpl extends OASTypeImpl implements OASNumericType {
     return hasEnums;
   }
 
+  @Override
+  public int hashCode() {
+    int hash = super.hashCode();
+    hash = 37 * hash + (minimum != null ? minimum.hashCode() : 0);
+    hash = 37 * hash + (maximum != null ? maximum.hashCode() : 0);
+    hash = 37 * hash + (exclusiveMinimum != null ? exclusiveMinimum.hashCode() : 0);
+    hash = 37 * hash + (exclusiveMaximum != null ? exclusiveMaximum.hashCode() : 0);
+    hash = 37 * hash + (multipleOf != null ? multipleOf.hashCode() : 0);
+    hash = 37 * hash + enums.hashCode();
+    return hash;
+  }
+
 }
