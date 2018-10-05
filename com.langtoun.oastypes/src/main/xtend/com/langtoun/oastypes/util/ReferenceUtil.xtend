@@ -27,7 +27,7 @@ class ReferenceUtil {
 
   def static String namespaceURI(Reference reference) {
     if (reference !== null) {
-      return "http://" + reference.fileName + "/" + reference.fragment.substring(1, reference.fragment.lastIndexOf('/'))
+      return "http://" + reference.fileName.replaceAll("[^a-zA-Z0-9]+", "_") + "/" + reference.fragment.substring(1, reference.fragment.lastIndexOf('/'))
     }
     return ""
   }
