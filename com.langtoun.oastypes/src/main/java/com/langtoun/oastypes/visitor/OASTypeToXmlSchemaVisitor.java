@@ -1039,14 +1039,12 @@ public final class OASTypeToXmlSchemaVisitor implements OASTypeDispatcher<XmlSch
   /**
    * Create a number schema type.
    *
-   * @param <T>
-   *          The numeric type being processed.
    * @param oasNumericType
    *          An numeric type from the OpenAPI definition.
    * @param baseTypeName
    *          The base type name that will be used to construct a name for this type.
-   * @param topLevel
-   *          If {@code true} create it as a top level type definition.
+   * @param context
+   *          The visitor context.
    * @return An {@link XmlSchemaType} built from the number schema type.
    */
   private XmlSchemaType createNumericSchemaType(final OASNumericType oasNumericType, final QName baseTypeName, final SchemaVisitorContext context) {

@@ -60,8 +60,8 @@ public class OASTypeImpl implements OASType {
     this.reference = reference;
     this.mappedName = mappedName;
     // members extracted from the model
-    this.name = reference != null ? typeName(reference) : schema.getName();
-    this.type = schemaType;
+    this.name = reference != null ? mappedName : schema.getName();
+    this.type = reference != null ? typeName(reference) : schemaType;
     this.format = schema.getFormat();
     this.title = schema.getTitle();
     this.description = schema.getDescription();
@@ -104,12 +104,12 @@ public class OASTypeImpl implements OASType {
 
   @Override
   public String name() {
-    return reference != null ? mappedName : name;
+    return name;
   }
 
   @Override
   public String type() {
-    return reference != null ? reference.getRefString() : type;
+    return type;
   }
 
   @Override

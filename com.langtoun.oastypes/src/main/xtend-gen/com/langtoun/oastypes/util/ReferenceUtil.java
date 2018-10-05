@@ -31,8 +31,8 @@ public class ReferenceUtil {
   
   public static String namespaceURI(final Reference reference) {
     if ((reference != null)) {
-      String _fileName = ReferenceUtil.fileName(reference);
-      String _plus = ("http://" + _fileName);
+      String _replaceAll = ReferenceUtil.fileName(reference).replaceAll("[^a-zA-Z0-9]+", "_");
+      String _plus = ("http://" + _replaceAll);
       String _plus_1 = (_plus + "/");
       String _substring = reference.getFragment().substring(1, reference.getFragment().lastIndexOf("/"));
       return (_plus_1 + _substring);
