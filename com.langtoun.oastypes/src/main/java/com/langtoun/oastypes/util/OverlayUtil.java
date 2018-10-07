@@ -17,7 +17,9 @@ import com.reprezen.jsonoverlay.Reference;
  *
  * @see <a href="https://github.com/RepreZen/JsonOverlay">RepreZen JsonOverlay Library</a>
  */
-public class OverlayUtil {
+public final class OverlayUtil {
+
+  private OverlayUtil() {}
 
   /**
    * Get the {@link Reference} used to define an object of type T using an
@@ -108,7 +110,7 @@ public class OverlayUtil {
    * @return The {@link Reference} that defines the object of type T, or {@code null}
    *         if the object is not defined by reference.
    */
-  public static <T> Reference getReference(Map<String, T> mappedItems, String key) {
+  public static <T> Reference getReference(final Map<String, T> mappedItems, final String key) {
     return Overlay.of(mappedItems).getReference(key);
   }
 

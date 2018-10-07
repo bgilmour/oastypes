@@ -64,6 +64,10 @@ import com.langtoun.oastypes.util.TraceLogger;
 import com.reprezen.kaizen.oasparser.model3.OpenApi3;
 import com.reprezen.kaizen.oasparser.model3.Schema;
 
+/**
+ * Type visitor implementation that creates XML schema from OpenAPI type definitions.
+ */
+// @Format-Off
 public final class OASTypeToXmlSchemaVisitor implements OASTypeDispatcher<XmlSchemaType, SchemaVisitorContext>, OASTypeVisitor<XmlSchemaType, SchemaVisitorContext> {
 
   private static final Logger LOGGER = Logger.getLogger(OASTypeToXmlSchemaVisitor.class);
@@ -480,9 +484,7 @@ public final class OASTypeToXmlSchemaVisitor implements OASTypeDispatcher<XmlSch
 
     if (referencedType == null || expand) {
       context.pushTopLevel(false);
-//      tracer.increaseIndent();
       final XmlSchemaType schemaType = visit(oasType, context);
-//      tracer.decreaseIndent();
       context.popTopLevel();
       if (schemaType != null) {
         schemaElement.setSchemaType(schemaType);
@@ -629,11 +631,11 @@ public final class OASTypeToXmlSchemaVisitor implements OASTypeDispatcher<XmlSch
    */
   private XmlSchemaAnnotation prepareComplexTypeAnnotation(final String typeName, final OASType oasType, final SchemaVisitorContext context) {
     XmlSchemaAnnotation xmlSchemaAnnotation = null;
-    if (context.isTopLevel() && !"object".equals(oasType.name())) {
+//    if (context.isTopLevel() && !"object".equals(oasType.name())) {
 //      xmlSchemaAnnotation = createRamlNameAnnotation(xmlSchemaAnnotation, typeName, legal(altFieldPrefix(typeName)));
 //      xmlSchemaAnnotation = createAuditMappingAnnotation(xmlSchemaAnnotation, oasType);
 //      xmlSchemaAnnotation = createGenericAnnotationType(xmlSchemaAnnotation, oasType);
-    }
+//    }
     return xmlSchemaAnnotation;
   }
 
@@ -789,10 +791,10 @@ public final class OASTypeToXmlSchemaVisitor implements OASTypeDispatcher<XmlSch
    */
   private XmlSchemaAnnotation prepareArrayTypeAnnotation(final OASType oasType, final SchemaVisitorContext context) {
     XmlSchemaAnnotation xmlSchemaAnnotation = null;
-    if (context.isTopLevel() && !"object".equals(oasType.name())) { //$NON-NLS-1$
+//    if (context.isTopLevel() && !"object".equals(oasType.name())) { //$NON-NLS-1$
 //      xmlSchemaAnnotation = createAuditMappingAnnotation(xmlSchemaAnnotation, oasType);
 //      xmlSchemaAnnotation = createGenericAnnotationType(xmlSchemaAnnotation, oasType);
-    }
+//    }
     return xmlSchemaAnnotation;
   }
 
@@ -928,12 +930,12 @@ public final class OASTypeToXmlSchemaVisitor implements OASTypeDispatcher<XmlSch
    */
   private XmlSchemaAnnotation prepareSimpleTypeAnnotation(final String typeName, final OASType oasType, final SchemaVisitorContext context) {
     XmlSchemaAnnotation xmlSchemaAnnotation = null;
-    if (context.isTopLevel()) {
+//    if (context.isTopLevel()) {
 //      xmlSchemaAnnotation = createOpenApiNameAnnotation(xmlSchemaAnnotation, typeName, legal(altFieldPrefix(typeName)));
 //      xmlSchemaAnnotation = createAuditMappingAnnotation(xmlSchemaAnnotation, oasType);
 //      xmlSchemaAnnotation = createClobTypeAnnotation(xmlSchemaAnnotation, oasType);
 //      xmlSchemaAnnotation = createGenericAnnotationType(xmlSchemaAnnotation, oasType);
-    }
+//    }
     return xmlSchemaAnnotation;
   }
 

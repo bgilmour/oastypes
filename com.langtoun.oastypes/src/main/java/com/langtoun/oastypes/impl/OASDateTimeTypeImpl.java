@@ -9,7 +9,8 @@ import com.reprezen.kaizen.oasparser.model3.Schema;
  * Implementation of {@link OASDateTimeType} that extends the {@link OASType}
  * base class.
  */
-public class OASDateTimeTypeImpl extends OASTypeImpl implements OASDateTimeType {
+// @Format-Off
+public class OASDateTimeTypeImpl extends OASUnfacetedTypeImpl implements OASDateTimeType {
 
   /**
    * Private constructor for an {@link OASDateTimeTypeImpl} base object. Objects must be
@@ -29,18 +30,6 @@ public class OASDateTimeTypeImpl extends OASTypeImpl implements OASDateTimeType 
    */
   private OASDateTimeTypeImpl(final OASType parent, final String mappedName, final String schemaType, final Schema schema, final Reference reference) {
     super(parent, mappedName, schemaType, schema, reference);
-  }
-
-  @Override
-  public String toString() {
-    final StringBuilder sb = new StringBuilder();
-
-    sb.append("{");
-    sb.append(super.toString());
-
-    sb.append("}");
-
-    return sb.toString();
   }
 
   /**

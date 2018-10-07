@@ -21,6 +21,7 @@ import com.reprezen.kaizen.oasparser.model3.Schema;
  * Implementation of {@link OASObjectType} that extends the {@link OASType}
  * base class.
  */
+// @Format-Off
 public class OASObjectTypeImpl extends OASTypeImpl implements OASObjectType {
   // members extracted from the model
   private List<String> required;

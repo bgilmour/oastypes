@@ -15,6 +15,7 @@ import com.reprezen.kaizen.oasparser.model3.Schema;
  * Implementation of {@link OASNumberType} that extends the {@link OASType}
  * base class.
  */
+// @Format-Off
 public class OASNumberTypeImpl extends OASNumericTypeImpl implements OASNumberType {
   // members computed from the model
   private boolean isDouble;
@@ -53,6 +54,10 @@ public class OASNumberTypeImpl extends OASNumericTypeImpl implements OASNumberTy
     sb.append(super.toString());
 
     if (reference() == null) {
+      if (multipleOf != null) {
+        sb.append(",").append(doubleQuote(escapeJson("multipleOf"))).append(":")
+        .append(isDouble ? multipleOf.doubleValue() : multipleOf.floatValue());
+      }
       if (minimum != null) {
         sb.append(",").append(doubleQuote(escapeJson("minimum"))).append(":")
           .append(isDouble ? minimum.doubleValue() : minimum.floatValue());
@@ -61,22 +66,7 @@ public class OASNumberTypeImpl extends OASNumericTypeImpl implements OASNumberTy
         sb.append(",").append(doubleQuote(escapeJson("maximum"))).append(":")
           .append(isDouble ? maximum.doubleValue() : maximum.floatValue());
       }
-      if (exclusiveMinimum != null) {
-        sb.append(",").append(doubleQuote(escapeJson("exclusiveMinimum"))).append(":")
-          .append(exclusiveMinimum.toString());
-      }
-      if (exclusiveMaximum != null) {
-        sb.append(",").append(doubleQuote(escapeJson("exclusiveMaximum"))).append(":")
-          .append(exclusiveMaximum.toString());
-      }
-      if (multipleOf != null) {
-        sb.append(",").append(doubleQuote(escapeJson("multipleOf"))).append(":")
-          .append(isDouble ? multipleOf.doubleValue() : multipleOf.floatValue());
-      }
-      if (hasEnums) {
-        sb.append(",").append(doubleQuote(escapeJson("enum"))).append(":")
-          .append(enums.stream().map(Object::toString).collect(Collectors.joining(",", "[", "]")));
-      }
+      sb.append(toStringCommon(sb));
     }
 
     sb.append("}");

@@ -15,6 +15,7 @@ import com.reprezen.kaizen.oasparser.model3.Schema;
  * Implementation of {@link OASStringType} that extends the {@link OASType}
  * base class.
  */
+// @Format-Off
 public class OASStringTypeImpl extends OASTypeImpl implements OASStringType {
   // members extracted from the model
   private Integer minLength;

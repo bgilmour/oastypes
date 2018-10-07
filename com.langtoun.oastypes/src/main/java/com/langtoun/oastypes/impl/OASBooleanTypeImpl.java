@@ -9,7 +9,8 @@ import com.reprezen.kaizen.oasparser.model3.Schema;
  * Implementation of {@link OASBooleanType} that extends the {@link OASType}
  * base class.
  */
-public class OASBooleanTypeImpl extends OASTypeImpl implements OASBooleanType {
+// @Format-Off
+public class OASBooleanTypeImpl extends OASUnfacetedTypeImpl implements OASBooleanType {
 
   /**
    * Private constructor for an {@link OASBooleanTypeImpl} base object. Objects must be
@@ -29,18 +30,6 @@ public class OASBooleanTypeImpl extends OASTypeImpl implements OASBooleanType {
    */
   private OASBooleanTypeImpl(final OASType parent, final String mappedName, final String schemaType, final Schema schema, final Reference reference) {
     super(parent, mappedName, schemaType, schema, reference);
-  }
-
-  @Override
-  public String toString() {
-    final StringBuilder sb = new StringBuilder();
-
-    sb.append("{");
-    sb.append(super.toString());
-
-    sb.append("}");
-
-    return sb.toString();
   }
 
   /**
