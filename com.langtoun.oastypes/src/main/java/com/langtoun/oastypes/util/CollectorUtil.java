@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 /**
  * Additional collectors for use with Stream::collect.
  */
+// @Format-Off
 public final class CollectorUtil {
 
   private CollectorUtil() {}
@@ -31,8 +32,8 @@ public final class CollectorUtil {
    * @return A new collector that uses a {@link LinkedHashMap}.
    */
   public static <T, A, R> Collector<T, ?, Map<A, R>> toLinkedMap(
-    Function<? super T, ? extends A> keyMapper,
-    Function<? super T, ? extends R> valueMapper
+    final Function<? super T, ? extends A> keyMapper,
+    final Function<? super T, ? extends R> valueMapper
   ) {
     return Collectors.toMap(
       keyMapper,

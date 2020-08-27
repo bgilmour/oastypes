@@ -9,7 +9,8 @@ import com.reprezen.kaizen.oasparser.model3.Schema;
  * Implementation of {@link OASNullType} that extends the {@link OASType}
  * base class.
  */
-public class OASNullTypeImpl extends OASTypeImpl implements OASNullType {
+// @Format-Off
+public class OASNullTypeImpl extends OASUnfacetedTypeImpl implements OASNullType {
 
   /**
    * Private constructor for an {@link OASNullTypeImpl} base object. Objects must be
@@ -29,18 +30,6 @@ public class OASNullTypeImpl extends OASTypeImpl implements OASNullType {
    */
   private OASNullTypeImpl(final OASType parent, final String mappedName, final String schemaType, final Schema schema, final Reference reference) {
     super(parent, mappedName, schemaType, schema, reference);
-  }
-
-  @Override
-  public String toString() {
-    final StringBuilder sb = new StringBuilder();
-
-    sb.append("{");
-    sb.append(super.toString());
-
-    sb.append("}");
-
-    return sb.toString();
   }
 
   /**

@@ -1,12 +1,21 @@
 package com.langtoun.oastypes.impl;
 
+import static com.langtoun.oastypes.util.StringExtensions.doubleQuote;
+import static org.apache.commons.text.StringEscapeUtils.escapeJson;
+
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.langtoun.oastypes.OASNumericType;
 import com.langtoun.oastypes.OASType;
 import com.reprezen.jsonoverlay.Reference;
 import com.reprezen.kaizen.oasparser.model3.Schema;
 
+/**
+ * Implementation of {@link OASNumericType} that extends the {@link OASType}
+ * base class and is a superclass of the numeric types.
+ */
+// @Format-Off
 public class OASNumericTypeImpl extends OASTypeImpl implements OASNumericType {
   // members extracted from the model
   protected Number minimum;
@@ -86,6 +95,30 @@ public class OASNumericTypeImpl extends OASTypeImpl implements OASNumericType {
   @Override
   public boolean hasEnums() {
     return hasEnums;
+  }
+
+  protected StringBuilder toStringCommon(final StringBuilder sb) {
+    if (reference() == null) {
+      if (hasEnums) {
+        sb.append(',').append(doubleQuote(escapeJson("enum"))).append(':') //$NON-NLS-1$
+          .append(enums.stream().map(Object::toString).collect(Collectors.joining(",", "[", "]"))); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+      }
+      if (exclusiveMinimum != null) {
+        sb.append(',').append(doubleQuote(escapeJson("exclusiveMinimum"))).append(':') //$NON-NLS-1$
+          .append(exclusiveMinimum.toString());
+      }
+      if (exclusiveMaximum != null) {
+        sb.append(',').append(doubleQuote(escapeJson("exclusiveMaximum"))).append(':') //$NON-NLS-1$
+          .append(exclusiveMaximum.toString());
+      }
+    }
+
+    return sb;
+  }
+
+  @Override
+  public boolean equals(final Object other) {
+    return super.equals(other);
   }
 
   @Override

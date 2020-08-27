@@ -15,6 +15,7 @@ import com.reprezen.kaizen.oasparser.model3.Schema;
  *
  * @see <a href="https://github.com/RepreZen/KaiZen-OpenApi-Parser">KaiZen-OpenApi-Parser</a>
  */
+// @Format-Off
 public class OASTypeImpl implements OASType {
   protected final OASType parent;
   // cached schema and reference objects

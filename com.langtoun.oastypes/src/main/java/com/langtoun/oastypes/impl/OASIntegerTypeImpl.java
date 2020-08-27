@@ -15,6 +15,7 @@ import com.reprezen.kaizen.oasparser.model3.Schema;
  * Implementation of {@link OASIntegerType} that extends the {@link OASType}
  * base class.
  */
+// @Format-Off
 public class OASIntegerTypeImpl extends OASNumericTypeImpl implements OASIntegerType {
   // members computed from the model
   private boolean isLong;
@@ -53,6 +54,10 @@ public class OASIntegerTypeImpl extends OASNumericTypeImpl implements OASInteger
     sb.append(super.toString());
 
     if (reference() == null) {
+      if (multipleOf != null) {
+        sb.append(",").append(doubleQuote(escapeJson("multipleOf"))).append(":")
+        .append(isLong ? multipleOf.longValue() : multipleOf.intValue());
+      }
       if (minimum != null) {
         sb.append(",").append(doubleQuote(escapeJson("minimum"))).append(":")
           .append(isLong ? minimum.longValue() : minimum.intValue());
@@ -61,22 +66,7 @@ public class OASIntegerTypeImpl extends OASNumericTypeImpl implements OASInteger
         sb.append(",").append(doubleQuote(escapeJson("maximum"))).append(":")
           .append(isLong ? maximum.longValue() : maximum.intValue());
       }
-      if (exclusiveMinimum != null) {
-        sb.append(",").append(doubleQuote(escapeJson("exclusiveMinimum"))).append(":")
-          .append(exclusiveMinimum.toString());
-      }
-      if (exclusiveMaximum != null) {
-        sb.append(",").append(doubleQuote(escapeJson("exclusiveMaximum"))).append(":")
-          .append(exclusiveMaximum.toString());
-      }
-      if (multipleOf != null) {
-        sb.append(",").append(doubleQuote(escapeJson("multipleOf"))).append(":")
-          .append(isLong ? multipleOf.longValue() : multipleOf.intValue());
-      }
-      if (hasEnums) {
-        sb.append(",").append(doubleQuote(escapeJson("enum"))).append(":")
-          .append(enums.stream().map(Object::toString).collect(Collectors.joining(",", "[", "]")));
-      }
+      sb.append(toStringCommon(sb));
     }
 
     sb.append("}");

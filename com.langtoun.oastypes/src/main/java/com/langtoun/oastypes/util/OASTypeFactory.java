@@ -21,18 +21,60 @@ import com.reprezen.kaizen.oasparser.model3.Schema;
  * A factory class that creates new {@link OASType} objects from
  * OpenAPI {@link Schema} objects.
  */
-public class OASTypeFactory {
+// @Format-Off
+public final class OASTypeFactory {
+
+  private OASTypeFactory() {}
 
   private static Logger LOGGER = Logger.getLogger(OASTypeFactory.class);
 
+  /**
+   * Create a new {@link OASType} object from a {@link Schema} object.
+   *
+   * @param mappedName
+   *          The top level or property name associated with the type definition.
+   * @param schema
+   *          The OpenAPI schema object.
+   * @param reference
+   *          The reference associated with the type, or {@code null} if there is no reference.
+   * @return A new {@link OASType} object.
+   */
   public static OASType createOASType(final String mappedName, final Schema schema, final Reference reference) {
     return createOASType(null, mappedName, schema, reference);
   }
 
+  /**
+   * Create a new {@link OASType} object from a {@link Schema} object.
+   *
+   * @param parent
+   *          The parent {@link OASType} object if this is a nested type definition.
+   * @param mappedName
+   *          The top level or property name associated with the type definition.
+   * @param schema
+   *          The OpenAPI schema object.
+   * @param reference
+   *          The reference associated with the type, or {@code null} if there is no reference.
+   * @return A new {@link OASType} object.
+   */
   public static OASType createOASType(final OASType parent, final String mappedName, final Schema schema, final Reference reference) {
     return createOASType(parent, mappedName, schema, reference, new HashMap<Schema, OASType>());
   }
 
+  /**
+   * Create a new {@link OASType} object from a {@link Schema} object.
+   *
+   * @param parent
+   *          The parent {@link OASType} object if this is a nested type definition.
+   * @param mappedName
+   *          The top level or property name associated with the type definition.
+   * @param schema
+   *          The OpenAPI schema object.
+   * @param reference
+   *          The reference associated with the type, or {@code null} if there is no reference.
+   * @param visitedTypes
+   *          A {@link Set} that tracks visited types to guard against infinite recursion.
+   * @return A new {@link OASType} object.
+   */
   public static OASType createOASType(final OASType parent, final String mappedName, final Schema schema, final Reference reference, final Map<Schema, OASType> visitedTypes) {
     /*
      * handle schema object cases
@@ -52,10 +94,10 @@ public class OASTypeFactory {
 
     String schemaType = schema.getType();
     if (schemaType == null) {
-      if (schema.hasProperties() || schema.hasAllOfSchemas()) {
-        schemaType = "object";
-      } else if (schema.getItemsSchema() != null) {
+      if (schema.getItemsSchema() != null) {
         schemaType = "array";
+      } else {
+        schemaType = "object";
       }
     }
 

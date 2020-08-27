@@ -17,6 +17,7 @@ import com.reprezen.kaizen.oasparser.model3.Schema;
  * Implementation of {@link OASArrayType} that extends the {@link OASType}
  * base class.
  */
+// @Format-Off
 public class OASArrayTypeImpl extends OASTypeImpl implements OASArrayType {
   // members extracted from the model
   private OASType items;
